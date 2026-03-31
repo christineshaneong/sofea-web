@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand Colors */
+  --color-sofea-maroon: #800000;
+  --color-sofea-gold: #bc9c22;
+  --color-sofea-black: #000000;
+  --color-sofea-white: #ffffff;
+
+  /* Custom Animations */
+  --animate-spin-slow: spin 20s linear infinite;
+
+  /* Custom Shadows */
+  --shadow-cube: 10px 10px 0px 0px rgba(188, 156, 34, 0.3);
+  --shadow-glow: 0 0 40px 10px rgba(128, 0, 0, 0.3);
+}
+
+/* Keep your existing body styles below */
+body {
+  background-color: var(--color-sofea-black);
+  color: var(--color-sofea-white);
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+}

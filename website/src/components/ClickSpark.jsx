@@ -1,0 +1,99 @@
+import React, { useRef, useCallback } from "react";
+
+export default function ClickSpark({
+  sparkColor = "#bc9c22", 
+  sparkSize = 8,
+  sparkRadius = 15,
+  sparkCount = 8,
+  duration = 400,
+  easing = "ease-out",
+  extraScale = 1,
+  children,
+}) {
+  const containerRef = useRef(null);
+  const sparkIdRef = useRef(0);
+  const activeSparkCount = useRef(0);
+  const MAX_CONCURRENT_SPARKS = 24;
+
+  const createSpark = useCallback(
+    (e) => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      if (activeSparkCount.current >= MAX_CONCURRENT_SPARKS) return;
+
+      const rect = container.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Create sparks
+      for (let i = 0; i < sparkCount; i++) {
+        const spark = document.createElement("div");
+        const angle = (360 / sparkCount) * i;
+
+        spark.style.cssText = `
+          position: absolute;
+          left: ${x}px;
+          top: ${y}px;
+          width: ${sparkSize}px;
+          height: ${sparkSize}px;
+          background: ${sparkColor};
+          border-radius: 50%;
+          pointer-events: none;
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+          z-index: 9999;
+        `;
+
+        container.appendChild(spark);
+        activeSparkCount.current++;
+
+        // Animate spark
+        const radian = (angle * Math.PI) / 180;
+        const distance = sparkRadius * extraScale;
+        const endX = x + Math.cos(radian) * distance;
+        const endY = y + Math.sin(radian) * distance;
+
+        spark.animate(
+          [
+            {
+              transform: "translate(-50%, -50%) scale(1)",
+              opacity: 1,
+              left: `${x}px`,
+              top: `${y}px`,
+            },
+            {
+              transform: "translate(-50%, -50%) scale(0)",
+              opacity: 0,
+              left: `${endX}px`,
+              top: `${endY}px`,
+            },
+          ],
+          {
+            duration,
+            easing,
+            fill: "forwards",
+          }
+        ).onfinish = () => {
+          spark.remove();
+          activeSparkCount.current--;
+        };
+      }
+    },
+    [sparkColor, sparkSize, sparkRadius, sparkCount, duration, easing, extraScale]
+  );
+
+  return (
+    <div
+      ref={containerRef}
+      onClick={createSpark}
+      style={{
+        position: "relative",
+        width: "100%",
+        minHeight: "100vh", // Ensures it covers the full screen height
+      }}
+    >
+      {children}
+    </div>
+  );
+}
