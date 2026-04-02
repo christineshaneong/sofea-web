@@ -1,9 +1,11 @@
-import recruitment from './recruitment'
+import event from './event'
+import teamMember from './teamMember' 
+import recruitment from './recruitment' // <--- Changed this to match your file
 import siteAssets from './siteAssets'
-import teamMember from './teamMember' // <--- Make sure this line exists!
 
 export const schemaTypes = [
-  recruitment, 
-  siteAssets, 
-  teamMember // <--- And this one!
+  event,
+  teamMember, 
+  recruitment, // <--- Match the import name above
+  siteAssets
 ]

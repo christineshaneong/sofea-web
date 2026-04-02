@@ -1,11 +1,12 @@
-import {defineConfig} from 'sanity'
-import {structureTool} from 'sanity/structure'
-import {visionTool} from '@sanity/vision'
-import {schemaTypes} from './schemaTypes'
+import { defineConfig } from 'sanity'
+import { structureTool } from 'sanity/structure'
+import { visionTool } from '@sanity/vision'
+import { schemaTypes } from './schemaTypes'
 
 export default defineConfig({
   name: 'default',
-  title: 'sofea-team-cms',
+  title: 'SOFEA MJIIT CMS',
+
   projectId: 'lhe7vych',
   dataset: 'production',
 
@@ -13,9 +14,9 @@ export default defineConfig({
     structureTool({
       structure: (S) =>
         S.list()
-          .title('Content')
+          .title('Content Management')
           .items([
-            // 1. SITE VISUALS (The single page for Slideshow/Backgrounds)
+            // 1. SITE VISUALS
             S.listItem()
               .title('Site Visuals')
               .id('siteAssets')
@@ -23,12 +24,12 @@ export default defineConfig({
                 S.document()
                   .schemaType('siteAssets')
                   .documentId('siteAssets')
+                  .title('Global Site Assets')
               ),
             
             S.divider(),
 
-            // 2. ALL OTHER DOCUMENTS (Team Members & Open Positions)
-            // This filter automatically shows everything registered in schemaTypes/index.js
+            // 2. OTHERS (Events, Recruitment, Team)
             ...S.documentTypeListItems().filter(
               (listItem) => !['siteAssets', 'media.tag'].includes(listItem.getId())
             ),
@@ -36,6 +37,12 @@ export default defineConfig({
     }),
     visionTool(),
   ],
+
+  // This prevents the Studio from trying to use advanced routing 
+  // features that clash with custom sidebar structures
+  document: {
+    productionViews: (prev, { schemaType }) => prev,
+  },
 
   schema: {
     types: schemaTypes,
