@@ -1,20 +1,21 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home'; // Make sure these paths match your folders!
+import Home from './pages/Home';
 import About from './pages/About'; 
 import Team from './pages/Team';
 import Recruitment from './pages/Recruitment';
 import SponsorPage from './pages/Sponsor';
 import Contact from './pages/Contact';
+import EventDetail from './pages/Events';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import Events from './pages/Events';
 
 function App() {
   return (
     <Router>
-      <ScrollToTop /> {/* This ensures we scroll to top on route change */}
-      {/* Navbar stays outside Routes so it shows on EVERY page */}
+      <ScrollToTop />
       <Navbar /> 
       
       <Routes>
@@ -24,6 +25,8 @@ function App() {
         <Route path="/recruitment" element={<Recruitment />} />
         <Route path="/sponsor" element={<SponsorPage />} />
         <Route path="/contact" element={<Contact />} />
+        {/* Dynamic route for the detailed event view */}
+        <Route path="/event/:id" element={<Events />} /> 
       </Routes>
 
       <Footer />

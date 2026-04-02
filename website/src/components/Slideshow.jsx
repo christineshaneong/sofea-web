@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { client, urlFor } from '../sanityClient';
+import client, { urlFor } from '../sanityClient';
 
 const Slideshow = () => {
   const [images, setImages] = useState([]);

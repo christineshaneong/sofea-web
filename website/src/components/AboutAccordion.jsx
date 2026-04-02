@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { client, urlFor } from '../sanityClient';
+import client, { urlFor } from '../sanityClient';
 
 const AboutAccordion = () => {
   const navigate = useNavigate();

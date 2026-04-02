@@ -4,7 +4,7 @@ import { Award, Target, BrainCircuit } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import TechBackground from '../components/TechBackground';
-import { client, urlFor } from '../sanityClient'; // 1. Added Sanity imports
+import client, { urlFor } from '../sanityClient';
 
 const About = () => {
   // 2. Setup state for your images

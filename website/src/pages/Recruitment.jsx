@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { client, urlFor } from '../sanityClient';
+import client, { urlFor } from '../sanityClient';
 
 const Recruitment = () => {
   const [positions, setPositions] = useState([]);
