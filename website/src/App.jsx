@@ -6,11 +6,10 @@ import Team from './pages/Team';
 import Recruitment from './pages/Recruitment';
 import SponsorPage from './pages/Sponsor';
 import Contact from './pages/Contact';
-import EventDetail from './pages/Events';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-import Events from './pages/Events';
+import Events from './pages/Events'; // Ensure this points to your Events.jsx file
 
 function App() {
   return (
@@ -25,7 +24,11 @@ function App() {
         <Route path="/recruitment" element={<Recruitment />} />
         <Route path="/sponsor" element={<SponsorPage />} />
         <Route path="/contact" element={<Contact />} />
-        {/* Dynamic route for the detailed event view */}
+
+        {/* 1. ROUTE FOR THE FILTERABLE LIST */}
+        <Route path="/events" element={<Events />} /> 
+
+        {/* 2. ROUTE FOR THE INDIVIDUAL EVENT DETAIL */}
         <Route path="/event/:id" element={<Events />} /> 
       </Routes>
 

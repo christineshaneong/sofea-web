@@ -28,7 +28,7 @@ const Home = () => {
       .catch(console.error);
   }, []);
 
-  const categories = ['All', 'Workshop', 'Competition', 'Social'];
+  const categories = ['all', 'workshop', 'competition', 'social'];
   
   // 2. Filter Logic
   const filteredEvents = filter === 'All' 
