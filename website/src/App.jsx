@@ -9,12 +9,15 @@ import Contact from './pages/Contact';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-import Events from './pages/Events'; // Ensure this points to your Events.jsx file
+import Events from './pages/Events';
+import MouseTrail from './components/MouseTrail'; // 1. Import MouseTrail globally
 
 function App() {
   return (
     <Router>
+      {/* 2. Global Layers: These show up on every page */}
       <ScrollToTop />
+      <MouseTrail /> 
       <Navbar /> 
       
       <Routes>
@@ -22,13 +25,14 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/team" element={<Team />} />
         <Route path="/recruitment" element={<Recruitment />} />
+        
+        {/* Unified Sponsor Route */}
         <Route path="/sponsor" element={<SponsorPage />} />
+        
         <Route path="/contact" element={<Contact />} />
 
-        {/* 1. ROUTE FOR THE FILTERABLE LIST */}
+        {/* Events Routes */}
         <Route path="/events" element={<Events />} /> 
-
-        {/* 2. ROUTE FOR THE INDIVIDUAL EVENT DETAIL */}
         <Route path="/event/:id" element={<Events />} /> 
       </Routes>
 

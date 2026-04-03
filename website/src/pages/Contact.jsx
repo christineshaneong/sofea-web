@@ -8,7 +8,7 @@ const Contact = () => {
   const socials = [
     { 
       name: 'Instagram', 
-      handle: '@sofea.utm', 
+      handle: '@sofea.utmkl', 
       link: 'https://www.instagram.com/sofea.utmkl', 
       gradient: 'bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7]',
       icon: <FaInstagram size={32} />

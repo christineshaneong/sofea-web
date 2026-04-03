@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import client, { urlFor } from '../sanityClient';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Team = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [heroImage, setHeroImage] = useState(null); // Added for Sanity Hero
+  const [heroImage, setHeroImage] = useState(null);
 
   const categories = ['All', 'Management', 'Projects', 'EXCOS'];
 
@@ -20,7 +21,7 @@ const Team = () => {
   ];
 
   useEffect(() => {
-    // 1. Fetch Hero Image from Site Visuals
+    // 1. Fetch Hero Image
     client.fetch(`*[_type == "siteAssets"][0].teamHero`).then((data) => {
       if (data) setHeroImage(urlFor(data).url());
     });
@@ -30,9 +31,7 @@ const Team = () => {
       const sortedData = data.sort((a, b) => {
         const indexA = roleOrder.indexOf(a.role);
         const indexB = roleOrder.indexOf(b.role);
-        const finalA = indexA === -1 ? 99 : indexA;
-        const finalB = indexB === -1 ? 99 : indexB;
-        return finalA - finalB;
+        return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
       });
       setMembers(sortedData);
       setLoading(false);
@@ -48,82 +47,110 @@ const Team = () => {
   });
 
   return (
-    <div className="bg-black min-h-screen text-white font-sans">
+    <div className="bg-black min-h-screen text-white font-sans selection:bg-[#800000] overflow-x-hidden">
       <Navbar />
 
       <main>
-        {/* HERO SECTION - Updated to use Sanity Hero */}
-        <section 
-          className="relative h-[50vh] md:h-[65vh] flex items-center justify-center bg-cover bg-center bg-no-repeat bg-[#1a0000]"
-          style={{ backgroundImage: heroImage ? `url(${heroImage})` : 'none' }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black"></div>
+        {/* HERO SECTION */}
+        <section className="relative h-[50vh] md:h-[65vh] flex items-center justify-center overflow-hidden">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000"
+            style={{ 
+              backgroundImage: heroImage ? `url(${heroImage})` : 'none',
+              opacity: heroImage ? 0.6 : 0.2
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black"></div>
+          </div>
           
           <div className="relative z-10 text-center px-6">
-            <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter text-white drop-shadow-2xl">
+            <motion.h1 
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-5xl md:text-9xl font-black uppercase tracking-tighter text-white drop-shadow-2xl italic leading-[0.9]"
+            >
               Meet Our Team
-            </h1>
-            <p className="mt-4 text-[#bc9c22] font-bold tracking-[0.4em] uppercase text-xs md:text-sm">
+            </motion.h1>
+            <p className="mt-4 text-[#bc9c22] font-black tracking-[0.4em] md:tracking-[0.6em] uppercase text-[10px] md:text-xs">
               The Crew Behind SOFEA
             </p>
           </div>
         </section>
 
-        {/* FILTER BAR */}
-        <nav className="sticky top-0 z-40 bg-black/90 backdrop-blur-md py-6 border-b border-white/5">
-          <div className="max-w-7xl mx-auto flex justify-center gap-3 px-6">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveFilter(cat)}
-                className={`px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${
-                  activeFilter === cat 
-                    ? 'bg-[#800000] text-white scale-105 shadow-[0_0_20px_rgba(128,0,0,0.4)]' 
-                    : 'bg-zinc-900 text-zinc-500 hover:text-white hover:bg-zinc-800'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+        {/* FILTER BAR - Mobile Optimized (Scrollable) */}
+        <nav className="sticky top-[80px] z-40 bg-black/90 backdrop-blur-md py-4 border-b border-white/5 shadow-xl">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex justify-start md:justify-center gap-2 overflow-x-auto pb-3 md:pb-0 scrollbar-hide">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveFilter(cat)}
+                  className={`whitespace-nowrap px-6 py-2 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
+                    activeFilter === cat 
+                      ? 'bg-[#800000] text-white scale-105 shadow-[0_0_15px_rgba(128,0,0,0.5)]' 
+                      : 'bg-zinc-900/40 text-zinc-500 hover:text-white'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
         </nav>
 
-        {/* TEAM GRID */}
-        <section className="max-w-[1600px] mx-auto px-6 py-16">
+        {/* TEAM GRID - MAINTAINING COLOR PICS */}
+        <section className="max-w-[1500px] mx-auto px-4 md:px-12 py-12 md:py-20">
           {loading ? (
-            <div className="text-center py-20">
-               <div className="inline-block w-8 h-8 border-4 border-[#800000] border-t-transparent rounded-full animate-spin"></div>
+            <div className="flex justify-center py-24">
+               <div className="w-10 h-10 border-2 border-[#800000] border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-              {filteredMembers.map((member) => (
-                <div key={member._id} className="bg-zinc-900/40 rounded-xl overflow-hidden border border-white/5 flex flex-col h-full hover:border-[#800000]/50 hover:bg-zinc-900/80 transition-all duration-500 group">
-                  <div className="aspect-[4/5] overflow-hidden bg-zinc-800">
-                    {member.photo ? (
-                      <img 
-                        src={urlFor(member.photo).width(500).url()} 
-                        alt={member.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-zinc-700 text-[10px] uppercase font-bold">No Portrait</div>
-                    )}
-                  </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-8">
+              <AnimatePresence mode="popLayout">
+                {filteredMembers.map((member) => (
+                  <motion.div 
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    key={member._id} 
+                    className="group bg-zinc-900/30 border border-white/5 flex flex-col h-full hover:border-[#800000]/50 transition-all duration-500 rounded-sm overflow-hidden"
+                  >
+                    {/* Portrait - Full Color Maintained */}
+                    <div className="aspect-[3/4] overflow-hidden bg-zinc-800 relative">
+                      {member.photo ? (
+                        <img 
+                          src={urlFor(member.photo).width(600).url()} 
+                          alt={member.name}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" // NO GRAYSCALE
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-zinc-700 text-[10px] uppercase font-black tracking-tighter">No Portrait</div>
+                      )}
+                      
+                      {/* Mobile gradient overlay for text legibility */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 md:hidden"></div>
+                    </div>
 
-                  <div className="p-5 flex flex-col flex-grow">
-                    <h3 className="text-[13px] md:text-[14px] font-bold tracking-tight text-white leading-tight uppercase group-hover:text-[#bc9c22] transition-colors">
-                      {member.name}
-                    </h3>
-                    <p className="text-[#bc9c22] text-[9px] font-black uppercase mt-1 tracking-widest">
-                      {member.role}
-                    </p>
-                    <div className="h-[1px] bg-white/5 my-4 mt-auto transition-all group-hover:bg-[#800000]/40 group-hover:w-full w-8"></div>
-                    <p className="text-zinc-600 text-[8px] font-bold uppercase tracking-[0.2em]">
-                      {member.department}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                    {/* Member Details */}
+                    <div className="p-4 md:p-6 flex flex-col flex-grow">
+                      <h3 className="text-[12px] md:text-[15px] font-black tracking-tight text-white leading-tight uppercase group-hover:text-[#bc9c22] transition-colors line-clamp-2">
+                        {member.name}
+                      </h3>
+                      <p className="text-[#bc9c22] text-[9px] md:text-[10px] font-black uppercase mt-1 tracking-widest leading-none">
+                        {member.role}
+                      </p>
+                      
+                      {/* Divider */}
+                      <div className="h-[1px] bg-white/10 my-4 md:my-5 mt-auto transition-all group-hover:bg-[#800000]/70 group-hover:w-full w-8"></div>
+                      
+                      <p className="text-zinc-500 text-[8px] md:text-[9px] font-bold uppercase tracking-[0.2em] leading-none">
+                        {member.department || m.category}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           )}
         </section>

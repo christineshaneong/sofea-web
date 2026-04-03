@@ -10,7 +10,7 @@ const AboutAccordion = () => {
     { id: 'about', title: 'ABOUT US', description: 'Discover our story and how we empower MJIIT students.', img: null, path: '/about' },
     { id: 'team', title: 'MEET THE TEAM', description: 'The passionate minds behind SOFEA working to bridge the gap.', img: null, path: '/team' },
     { id: 'recruitment', title: 'RECRUITMENT', description: 'Join the family! We are looking for Technical leads.', img: null, path: '/recruitment' },
-    { id: 'sponsor', title: 'SPONSOR US', description: 'Partner with us to reach the next generation of engineers.', img: null, path: '/sponsorship' },
+    { id: 'sponsor', title: 'SPONSOR US', description: 'Partner with us to reach the next generation of engineers.', img: null, path: '/sponsor' },
     { id: 'contact', title: 'CONTACT', description: 'Reach out to our executive team directly.', img: null, path: '/contact' },
   ]);
 
