@@ -15,6 +15,13 @@ export default {
       title: 'Role',
     },
     {
+      name: 'roleOrder',
+      title: 'Priority Order',
+      type: 'number',
+      description: 'Use 1 for President, 2 for VP, etc. (Lower numbers show first)',
+      validation: Rule => Rule.required()
+    },
+    {
       name: 'department',
       type: 'string',
       title: 'Department',
@@ -23,7 +30,7 @@ export default {
           {title: 'Management', value: 'management'},
           {title: 'EXCOS', value: 'excos'},
           {title: 'Projects', value: 'projects'},
-        ], // You can edit these or remove 'options' to make it a free-text field
+        ],
       }
     },
     {
@@ -31,8 +38,18 @@ export default {
       type: 'image',
       title: 'Photo',
       options: {
-        hotspot: true, // This lets you crop faces perfectly later
+        hotspot: true,
       },
     },
+    {
+      name: 'year',
+      title: 'Session Year',
+      type: 'string',
+      description: 'Type the session (e.g., 2025/2026). The website will update automatically!',
+      validation: Rule => Rule.required().regex(/^\d{4}\/\d{4}$/, {
+        name: 'session format',
+        invert: false,
+      }).error('Please use the format YYYY/YYYY (e.g. 2025/2026)')
+    }
   ],
 }

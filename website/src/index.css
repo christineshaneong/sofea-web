@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -15,10 +16,99 @@
   --shadow-glow: 0 0 40px 10px rgba(128, 0, 0, 0.3);
 }
 
-/* Keep your existing body styles below */
+/* --- Global Core --- */
+html {
+  scrollbar-gutter: stable !important;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 100%;
+}
+
 body {
   background-color: var(--color-sofea-black);
   color: var(--color-sofea-white);
   margin: 0;
+  /* KEPT YOUR FONT CHOICE */
   font-family: 'Inter', system-ui, sans-serif;
+  overflow: visible;
+  height: auto;
+  min-height: 100%;
 }
+
+/* --- MENU TYPEWRITER ENTRANCE --- */
+.menu-typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0;
+  display: inline-block;
+  animation: menu-typing 0.4s steps(30, end) forwards;
+}
+
+@keyframes menu-typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* Staggered Delays */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+.delay-6 { animation-delay: 0.6s; }
+.delay-7 { animation-delay: 0.7s; }
+
+/* --- EXPANDING FRAME HOVER EFFECT --- */
+.nav-expand-link {
+  position: relative;
+  display: block;
+  transition: 0.5s;
+  z-index: 1;
+}
+
+.nav-expand-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-top: 2px solid var(--color-sofea-gold);
+  border-bottom: 2px solid var(--color-sofea-gold);
+  transform: scaleY(2);
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.nav-expand-link::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-sofea-gold);
+  transform: scale(0);
+  opacity: 0;
+  transition: 0.3s;
+  z-index: -1;
+}
+
+.nav-expand-link:hover {
+  color: #fff !important;
+}
+
+.nav-expand-link:hover::before {
+  transform: scaleY(1);
+  opacity: 1;
+}
+
+.nav-expand-link:hover::after {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: var(--color-sofea-maroon); }

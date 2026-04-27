@@ -11,6 +11,8 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import Events from './pages/Events';
 import MouseTrail from './components/MouseTrail'; // 1. Import MouseTrail globally
+import Archive from './pages/Archive'; // Add this import
+
 
 function App() {
   return (
@@ -34,6 +36,7 @@ function App() {
         {/* Events Routes */}
         <Route path="/events" element={<Events />} /> 
         <Route path="/event/:id" element={<Events />} /> 
+        <Route path="/archive" element={<Archive />} />
       </Routes>
 
       <Footer />

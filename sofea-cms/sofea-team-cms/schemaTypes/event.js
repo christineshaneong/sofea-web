@@ -4,6 +4,14 @@ export default {
   type: 'document',
   fields: [
     { name: 'title', title: 'Event Title', type: 'string' },
+    // ADD THIS FIELD BELOW
+    { 
+      name: 'year', 
+      title: 'Session Year', 
+      type: 'string', 
+      description: 'Must match the Archive format (e.g., 2025/2026)',
+      validation: Rule => Rule.required() 
+    },
     { 
       name: 'category', 
       title: 'Event Category', 
