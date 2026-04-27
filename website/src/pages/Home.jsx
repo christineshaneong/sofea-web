@@ -69,24 +69,13 @@ const Home = () => {
   useEffect(() => {
     setLoading(true);
     
-    // 1. Get Start of Today (00:00:00)
+    // Get Start of Today (00:00:00) to ensure today's events show
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
-    
-    // 2. Get End of Today (23:59:59)
-    const endOfToday = new Date();
-    endOfToday.setHours(23, 59, 59, 999);
-
     const startISO = startOfToday.toISOString();
-    const endISO = endOfToday.toISOString();
 
-    /**
-     * QUERY LOGIC: 
-     * We only want events that fall within the current calendar day.
-     * date >= startOfToday (Removes past events)
-     * date <= endOfToday (Removes future events)
-     */
-    const query = `*[_type == "event" && date >= "${startISO}" && date <= "${endISO}"] | order(date asc)`;
+    // Show all events from today onwards
+    const query = `*[_type == "event" && date >= "${startISO}"] | order(date asc)`;
 
     client.fetch(query)
       .then((data) => {
@@ -94,7 +83,7 @@ const Home = () => {
         setLoading(false);
       })
       .catch((err) => {
-        console.error(err);
+        console.error("Sanity Fetch Error:", err);
         setLoading(false);
       });
   }, []);
@@ -153,8 +142,8 @@ const Home = () => {
               <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
                   <div>
-                    <h2 className="text-5xl font-black uppercase tracking-tighter italic leading-none text-white">Today's Events</h2>
-                    <p className="text-zinc-500 uppercase tracking-[0.3em] text-[10px] mt-4 font-bold">Happening Now</p>
+                    <h2 className="text-5xl font-black uppercase tracking-tighter italic leading-none text-white">Upcoming Events</h2>
+                    <p className="text-zinc-500 uppercase tracking-[0.3em] text-[10px] mt-4 font-bold">What's Next</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {categories.map(cat => (
@@ -176,53 +165,72 @@ const Home = () => {
                     <div className="w-10 h-10 border-4 border-[#800000] border-t-transparent rounded-full animate-spin"></div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <AnimatePresence mode="popLayout">
-                      {filteredEvents.map((event) => (
-                        <motion.div
-                          layout
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          key={event._id}
-                          className="group bg-zinc-900/30 border border-zinc-800 hover:border-[#800000] transition-colors duration-500 rounded-sm overflow-hidden"
-                        >
-                          <Link to={`/event/${event._id}`}>
-                            <div className="aspect-square overflow-hidden border-b border-zinc-800">
-                              {event.mainImage && (
-                                <img 
-                                  src={urlFor(event.mainImage).width(600).height(600).url()} 
-                                  alt={event.title}
-                                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                />
-                              )}
-                            </div>
-                            <div className="p-6">
-                              <span className="text-[#bc9c22] text-[10px] uppercase font-bold tracking-[0.2em]">{event.category}</span>
-                              <h3 className="text-xl font-bold mt-2 group-hover:text-[#800000] transition-colors uppercase italic leading-tight line-clamp-2">{event.title}</h3>
-                              <p className="text-zinc-500 text-[11px] font-bold mt-3 uppercase tracking-widest">{new Date(event.date).toDateString()}</p>
-                              
-                              <div className="mt-6 flex items-center text-[10px] font-black uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">
-                                View Details <span className="ml-2 text-[#800000]">→</span>
-                              </div>
-                            </div>
-                          </Link>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                )}
+                  <>
+                    {filteredEvents.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <AnimatePresence mode="popLayout">
+                          {filteredEvents.map((event) => (
+                            <motion.div
+                              layout
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95 }}
+                              key={event._id}
+                              className="group bg-zinc-900/30 border border-zinc-800 hover:border-[#800000] transition-colors duration-500 rounded-sm overflow-hidden"
+                            >
+                              <Link to={`/event/${event._id}`}>
+                                <div className="aspect-square overflow-hidden border-b border-zinc-800">
+                                  {event.mainImage && (
+                                    <img 
+                                      src={urlFor(event.mainImage).width(600).height(600).url()} 
+                                      alt={event.title}
+                                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    />
+                                  )}
+                                </div>
+                                <div className="p-6">
+                                  <span className="text-[#bc9c22] text-[10px] uppercase font-bold tracking-[0.2em]">{event.category}</span>
+                                  <h3 className="text-xl font-bold mt-2 group-hover:text-[#800000] transition-colors uppercase italic leading-tight line-clamp-2">{event.title}</h3>
+                                  <p className="text-zinc-500 text-[11px] font-bold mt-3 uppercase tracking-widest">{new Date(event.date).toDateString()}</p>
+                                  
+                                  <div className="mt-6 flex items-center text-[10px] font-black uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">
+                                    View Details <span className="ml-2 text-[#800000]">→</span>
+                                  </div>
+                                </div>
+                              </Link>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
+                    ) : (
+                      /* Enhanced Empty State / Archive Bridge */
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-center py-24 border border-zinc-900 bg-zinc-900/10 rounded-sm"
+                      >
+                        <div className="mb-6 inline-block p-4 rounded-full bg-zinc-900/50">
+                          <svg className="w-8 h-8 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        
+                        <h3 className="text-zinc-400 uppercase text-[10px] tracking-[0.4em] font-black italic mb-2">
+                          No upcoming events scheduled
+                        </h3>
+                        <p className="text-zinc-600 text-[11px] uppercase tracking-widest mb-8">
+                          Check back later or explore what we've done before.
+                        </p>
 
-                {/* Empty State */}
-                {!loading && filteredEvents.length === 0 && (
-                  <div className="text-center py-20 border border-dashed border-white/5">
-                    <p className="text-zinc-500 uppercase text-[10px] tracking-[0.4em] font-black italic">
-                      No events scheduled for today.
-                    </p>
-                    <Link to="/archive" className="mt-4 inline-block text-[9px] text-[#bc9c22] uppercase tracking-widest font-black hover:underline">
-                      View Upcoming or Past Events in the Archive →
-                    </Link>
-                  </div>
+                        <Link 
+                          to="/archive" 
+                          className="inline-flex items-center px-8 py-3 border border-[#bc9c22] text-[#bc9c22] text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#bc9c22] hover:text-black transition-all duration-300"
+                        >
+                          See Past Events <span className="ml-2">→</span>
+                        </Link>
+                      </motion.div>
+                    )}
+                  </>
                 )}
               </div>
             </section>
