@@ -15,6 +15,46 @@ import Slideshow from '../components/Slideshow';
 const builder = imageUrlBuilder(client);
 const urlFor = (source) => builder.image(source);
 
+/**
+ * MARQUEE COMPONENT
+ * Handles the infinite scrolling of partner logos
+ */
+const Marquee = ({ images, speed = 25, reverse = false }) => {
+  if (!images || images.length === 0) return null;
+
+  // Triple the array to ensure a seamless infinite loop without gaps
+  const duplicatedImages = [...images, ...images, ...images];
+
+  return (
+    <div className="flex overflow-hidden relative w-full group">
+      <motion.div
+        className="flex whitespace-nowrap gap-16 md:gap-32 items-center"
+        animate={{
+          x: reverse ? ["-33.33%", "0%"] : ["0%", "-33.33%"],
+        }}
+        transition={{
+          ease: "linear",
+          duration: speed,
+          repeat: Infinity,
+        }}
+      >
+        {duplicatedImages.map((logo, i) => (
+          <img
+            key={i}
+            src={urlFor(logo).url()}
+            className="h-8 md:h-12 w-auto object-contain opacity-70 transition-opacity duration-300 hover:opacity-100"
+            alt="Partner Logo"
+          />
+        ))}
+      </motion.div>
+      
+      {/* Visual edge fades */}
+      <div className="absolute inset-y-0 left-0 w-16 md:w-32 bg-gradient-to-r from-black to-transparent z-10" />
+      <div className="absolute inset-y-0 right-0 w-16 md:w-32 bg-gradient-to-l from-black to-transparent z-10" />
+    </div>
+  );
+};
+
 const ModernReveal = ({ lines }) => {
   const container = {
     hidden: { opacity: 0 },
@@ -25,7 +65,7 @@ const ModernReveal = ({ lines }) => {
   };
 
   const item = {
-    hidden: { y: "110%" }, // Increased slightly to ensure full hide
+    hidden: { y: "110%" },
     visible: {
       y: 0,
       transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
@@ -35,7 +75,6 @@ const ModernReveal = ({ lines }) => {
   return (
     <motion.div variants={container} initial="hidden" animate="visible" className="flex flex-col items-center lg:items-start">
       {lines.map((line, index) => (
-        /* Added overflow-visible on the outer and a bit of padding-right on the inner to prevent clipping */
         <div key={index} className="overflow-hidden h-fit w-fit pr-4 -mr-4"> 
           <motion.span 
             variants={item} 
@@ -121,13 +160,11 @@ const Home = () => {
           <section className="pt-24 pb-12 px-6 md:px-16 lg:px-24 border-t border-white/5">
             <div className="max-w-5xl mx-auto text-center">
               <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter italic mb-4">Annual Roadmap</h2>
-              
               {siteAssets?.roadmapTitle && (
                 <p className="text-[#bc9c22] uppercase tracking-[0.4em] text-xs md:text-sm font-black mb-10">
                   {siteAssets.roadmapTitle}
                 </p>
               )}
-              
               <div className="relative rounded-xl border border-white/10 overflow-hidden bg-zinc-900/20 p-3 md:p-6 shadow-2xl">
                 {siteAssets?.timelineImage ? (
                   <img src={urlFor(siteAssets.timelineImage).url()} alt="Roadmap" className="w-full h-auto opacity-90 rounded-lg" />
@@ -156,7 +193,6 @@ const Home = () => {
                   ))}
                 </div>
               </div>
-
               {loading ? (
                 <div className="flex justify-center py-20"><div className="w-10 h-10 border-4 border-[#800000] border-t-transparent rounded-full animate-spin" /></div>
               ) : (
@@ -180,39 +216,31 @@ const Home = () => {
             </div>
           </section>
 
-          {/* PARTNERS SECTION (FULL COLOR & CENTERED) */}
+          {/* PARTNERS SECTION */}
           <section className="py-24 px-6 md:px-16 lg:px-24 bg-black">
             <div className="max-w-7xl mx-auto space-y-24">
               
-              {/* Strategic Partners (Sponsorships) */}
+              {/* Strategic Partners Row */}
               <div className="relative text-center">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black px-6 z-20">
                   <span className="text-[#bc9c22] text-[10px] md:text-xs font-black uppercase tracking-[0.6em]">Strategic Partners</span>
                 </div>
-                <div className="border border-white/5 pt-16 pb-12 overflow-hidden relative rounded-xl">
-                  <div className="flex w-max animate-marquee gap-24 md:gap-32 items-center">
-                    {[...(siteAssets?.sponsors || []), ...(siteAssets?.sponsors || []), ...(siteAssets?.sponsors || [])].map((logo, i) => (
-                      <img key={i} src={urlFor(logo).url()} className="h-10 md:h-12 w-auto object-contain opacity-90" alt="Sponsor" />
-                    ))}
-                  </div>
-                  <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-black to-transparent z-10" />
-                  <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-black to-transparent z-10" />
+                <div className="border border-white/5 pt-16 pb-12 rounded-xl overflow-hidden">
+                  {siteAssets?.sponsors?.length > 0 && (
+                    <Marquee images={siteAssets.sponsors} speed={25} />
+                  )}
                 </div>
               </div>
 
-              {/* Official Collaborations */}
+              {/* Official Collaborations Row */}
               <div className="relative text-center">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black px-6 z-20">
                   <span className="text-zinc-500 text-[10px] md:text-xs font-black uppercase tracking-[0.6em]">Official Collaborations</span>
                 </div>
-                <div className="border border-white/5 pt-16 pb-12 overflow-hidden relative rounded-xl">
-                  <div className="flex w-max animate-marquee-slow gap-24 md:gap-32 items-center">
-                    {[...(siteAssets?.collaborators || []), ...(siteAssets?.collaborators || []), ...(siteAssets?.collaborators || [])].map((logo, i) => (
-                      <img key={i} src={urlFor(logo).url()} className="h-8 md:h-10 w-auto object-contain opacity-80" alt="Collab" />
-                    ))}
-                  </div>
-                  <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-black to-transparent z-10" />
-                  <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-black to-transparent z-10" />
+                <div className="border border-white/5 pt-16 pb-12 rounded-xl overflow-hidden">
+                  {siteAssets?.collaborators?.length > 0 && (
+                    <Marquee images={siteAssets.collaborators} speed={35} reverse={true} />
+                  )}
                 </div>
               </div>
 
