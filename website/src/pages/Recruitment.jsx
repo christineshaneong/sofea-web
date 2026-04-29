@@ -1,107 +1,101 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import client, { urlFor } from '../sanityClient';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import client, { urlFor } from '../sanityClient';
-import { motion } from 'framer-motion';
 
 const Recruitment = () => {
-  const [positions, setPositions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [recruitData, setRecruitData] = useState(null);
   const [heroImage, setHeroImage] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    client.fetch(`*[_type == "siteAssets"][0].recruitmentHero`).then((data) => {
-      if (data) setHeroImage(urlFor(data).url());
-    });
+    // We fetch the Hero from siteAssets and the Link from recruitment
+    const query = `{
+      "assets": *[_type == "siteAssets"][0],
+      "recruit": *[_type == "recruitment"][0]
+    }`;
 
-    client.fetch(`*[_type == "recruitment"] | order(_createdAt asc)`).then((data) => {
-      setPositions(data);
+    client.fetch(query).then((data) => {
+      if (data.assets?.recruitmentHero) {
+        setHeroImage(urlFor(data.assets.recruitmentHero).url());
+      }
+      setRecruitData(data.recruit);
+      setLoading(false);
+    }).catch(err => {
+      console.error("Fetch Error:", err);
       setLoading(false);
     });
   }, []);
 
   return (
-    <div className="bg-black min-h-screen text-white font-sans selection:bg-[#800000] overflow-x-hidden">
+    <div className="bg-zinc-950 min-h-screen text-white font-sans flex flex-col selection:bg-[#800000]">
       <Navbar />
 
-      <main>
-        {/* HERO SECTION */}
-        <section className="relative h-[55vh] md:h-[80vh] w-full overflow-hidden">
-          <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60"
-            style={{ backgroundImage: heroImage ? `url(${heroImage})` : 'none' }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black"></div>
+      <main className="flex-grow">
+        <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            {heroImage && (
+              <img 
+                src={heroImage} 
+                className="w-full h-full object-cover opacity-80 contrast-110"
+                alt="Join SOFEA"
+              />
+            )}
+            <div className="absolute inset-0 bg-black/50" />
+            <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-transparent to-zinc-950" />
           </div>
           
-          <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
+          <div className="relative z-10 text-center px-6 max-w-5xl flex flex-col items-center">
             <motion.h2 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-[#bc9c22] text-[9px] md:text-xs font-black uppercase tracking-[0.5em] mb-3"
+              initial={{ opacity: 0, letterSpacing: "0.2em" }}
+              animate={{ opacity: 1, letterSpacing: "0.6em" }}
+              className="text-[#bc9c22] font-bold uppercase text-[10px] md:text-xs mb-4 drop-shadow-md"
             >
-              Opportunities
+              Career & Leadership
             </motion.h2>
+
             <motion.h1 
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter uppercase leading-[0.9]"
+              className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-[0.9] mb-6 drop-shadow-2xl"
             >
-              Join the <br /> <span className="italic">Board.</span>
+              Shape the <br/> <span className="text-white">Future.</span>
             </motion.h1>
+
+            <p className="text-zinc-400 uppercase tracking-[0.25em] text-[10px] md:text-xs max-w-xl leading-relaxed mb-10 opacity-80">
+              We are looking for driven individuals to lead MJIIT's software engineering community. Join the SOFEA Executive Board.
+            </p>
+            
+            {/* DYNAMIC BUTTON BASED ON isLive TOGGLE */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              {recruitData?.isLive ? (
+                <a 
+                  href={recruitData?.applicationLink || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative px-12 py-5 bg-[#800000] text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-full overflow-hidden transition-all duration-500 hover:scale-105 hover:bg-white hover:text-black shadow-[0_0_40px_rgba(128,0,0,0.3)]"
+                >
+                    <span className="relative z-10">Apply as Committee Now</span>
+                </a>
+              ) : (
+                <div className="px-12 py-5 border border-white/10 text-zinc-500 text-[11px] font-black uppercase tracking-[0.4em] rounded-full cursor-not-allowed">
+                  Recruitment Currently Closed
+                </div>
+              )}
+            </motion.div>
           </div>
         </section>
 
-        {/* POSITIONS SECTION */}
-        <section className="relative z-20 bg-black max-w-6xl mx-auto px-6 pb-32">
-          <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-6">
-            <h3 className="text-[#bc9c22] text-[9px] font-black uppercase tracking-[0.3em]">
-              Available Positions ({positions.length})
+        <section className="py-32 px-6 bg-zinc-950">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="w-12 h-[1px] bg-[#800000] mx-auto mb-10"></div>
+            <h3 className="text-2xl md:text-4xl font-light uppercase tracking-tighter leading-snug text-zinc-300">
+              "Being part of the board isn't just a title—it's about <span className="text-white font-bold">impact</span>, <span className="text-[#bc9c22] font-bold">growth</span>, and building a legacy for MJIIT."
             </h3>
           </div>
-
-          {loading ? (
-            <div className="flex justify-center py-20">
-              <div className="w-8 h-8 border-2 border-[#800000] border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          ) : (
-            <div className="flex flex-col">
-              {positions.map((job) => (
-                <div 
-                  key={job._id} 
-                  className="group flex flex-col md:flex-row items-start md:items-center justify-between py-8 md:py-16 border-b border-white/5 gap-6"
-                >
-                  {/* Reduced Mobile Font: text-2xl vs text-7xl desktop */}
-                  <h3 className="text-2xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-tight group-hover:text-[#bc9c22] transition-colors duration-500">
-                    {job.title}
-                  </h3>
-
-                  {/* Refined Button: Narrower on mobile */}
-                  <div className="w-full md:w-auto">
-                    <a 
-                      href={job.applicationLink} 
-                      target="_blank" 
-                      rel="noreferrer"
-                      className="
-                        inline-flex items-center justify-center gap-3
-                        w-full md:w-auto px-6 py-4 md:px-10 md:py-5 
-                        bg-[#800000] text-white font-black uppercase tracking-[0.2em] text-[10px] md:text-[12px]
-                        transition-all duration-300
-                        hover:bg-white hover:text-black
-                        shadow-[0_0_20px_rgba(128,0,0,0.2)]
-                      "
-                    >
-                      <span>Apply Now</span>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="7" y1="17" x2="17" y2="7"></line>
-                        <polyline points="7 7 17 7 17 17"></polyline>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </section>
       </main>
     </div>

@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import client, { urlFor } from '../sanityClient';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import client, { urlFor } from '../sanityClient';
 
 const Sponsor = () => {
   const [heroImage, setHeroImage] = useState(null);
-
-  // Replace this with your actual Google Form URL
-  const GOOGLE_FORM_URL = "https://forms.gle/your-actual-form-id";
+  const OFFICIAL_EMAIL = "sofea.mjiit@utm.my";
 
   useEffect(() => {
     client.fetch(`*[_type == "siteAssets"][0].sponsorHero`).then((data) => {
@@ -17,76 +15,111 @@ const Sponsor = () => {
     }).catch(err => console.error("Sponsor Hero Fetch Error:", err));
   }, []);
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(OFFICIAL_EMAIL);
+    alert("Email copied to clipboard!");
+  };
+
+  const inputStyle = "w-full bg-[#1A1A1A] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#bc9c22] transition-colors";
+  const labelStyle = "block text-[10px] uppercase font-black tracking-[0.2em] text-zinc-500 mb-2";
+
   return (
-    <div className="bg-black min-h-screen text-white font-sans flex flex-col">
+    <div className="bg-zinc-950 min-h-screen text-white font-sans flex flex-col selection:bg-[#800000]">
       <Navbar />
 
-      <main className="flex-grow">
-        {/* HERO SECTION */}
-        {/* Changed h-[85vh] to min-h-screen to ensure true vertical centering */}
-        <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#1a0000]">
-          <div className="absolute inset-0 z-0">
-            {heroImage && (
+      <main className="flex-grow flex items-center justify-center py-20 px-4 md:px-6">
+        {/* MAIN CARD CONTAINER */}
+        <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 bg-[#0F0F0F] rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl">
+          
+          {/* LEFT SIDE: DYNAMIC IMAGE */}
+          <div className="relative h-64 lg:h-auto overflow-hidden">
+            {heroImage ? (
               <img 
                 src={heroImage} 
-                className="w-full h-full object-cover opacity-90 grayscale contrast-125"
-                alt="Sponsor SOFEA"
+                className="w-full h-full object-cover grayscale brightness-75 contrast-125"
+                alt="Sponsorship"
               />
+            ) : (
+              <div className="w-full h-full bg-zinc-900 animate-pulse" />
             )}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
             
-            {/* Dark Overlays */}
-            <div className="absolute inset-0 bg-black/40" />
-            <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
-          </div>
-          
-          <div className="relative z-10 text-center px-6 max-w-5xl flex flex-col items-center">
-            {/* Subtitle */}
-            <h2 className="text-[#bc9c22] font-bold tracking-[0.6em] uppercase text-[10px] md:text-xs mb-4 drop-shadow-md">
-              Partnership Opportunities
-            </h2>
-
-            {/* Main Heading - Adjusted leading for better visual weight */}
-            <h1 className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-[0.9] mb-6 drop-shadow-2xl">
-              Elevate <br/> <span className="text-white">With Us.</span>
-            </h1>
-
-            {/* Description */}
-            <p className="text-zinc-400 uppercase tracking-[0.25em] text-[10px] md:text-xs max-w-xl leading-relaxed mb-10 opacity-80">
-              Join MJIIT's premier computing society in shaping the future of technology and engineering education.
-            </p>
-            
-            {/* CTA BUTTONS */}
-            <div className="flex flex-col items-center gap-8">
-                {/* Main Google Form Button */}
-                <a 
-                  href={GOOGLE_FORM_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative px-12 py-5 bg-[#800000] text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-full overflow-hidden transition-all duration-500 hover:scale-105 hover:bg-white hover:text-black shadow-[0_0_40px_rgba(128,0,0,0.4)]"
-                >
-                    <span className="relative z-10">Become a SPONSOR</span>
-                </a>
-                
-                {/* Underlined Email Inquiry */}
-                <a 
-                  href="mailto:contact@sofea.com" 
-                  className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-500 hover:text-[#bc9c22] transition-all duration-300 border-b border-zinc-800 hover:border-[#bc9c22] pb-1"
-                >
-                    Inquiry via Email
-                </a>
+            {/* Branding Overlay */}
+            <div className="absolute bottom-12 left-12 hidden lg:block">
+              <p className="text-[#bc9c22] text-[10px] font-black uppercase tracking-[0.5em] mb-2">Partnership</p>
+              <h1 className="text-5xl font-black uppercase tracking-tighter italic leading-none">MJIIT <br/>SOFEA</h1>
             </div>
           </div>
-        </section>
 
-        {/* MINIMAL QUOTE SECTION */}
-        <section className="py-32 px-6 bg-black">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="w-12 h-[1px] bg-[#800000] mx-auto mb-10"></div>
-            <h3 className="text-2xl md:text-4xl font-light uppercase tracking-tighter leading-snug text-zinc-300">
-              "We bridge the gap between <span className="text-white font-bold italic">academic excellence</span> and <span className="text-[#bc9c22] font-bold">industry innovation</span> through strategic collaboration."
-            </h3>
+          {/* RIGHT SIDE: CONTENT & FORM */}
+          <div className="p-8 md:p-12 lg:p-16 flex flex-col">
+            {/* SPONSOR US HEADER */}
+            <div className="mb-10">
+              <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-2 text-white">SPONSOR US</h1>
+              <div className="w-12 h-1 bg-[#800000]" />
+            </div>
+
+            <h2 className="text-sm font-bold uppercase tracking-widest mb-8 text-zinc-400">Contact form</h2>
+
+            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className={labelStyle}>Company Name</label>
+                  <input type="text" placeholder="Your company name" className={inputStyle} />
+                </div>
+                <div>
+                  <label className={labelStyle}>Contact Name</label>
+                  <input type="text" placeholder="Your name" className={inputStyle} />
+                </div>
+              </div>
+
+              <div>
+                <label className={labelStyle}>Email</label>
+                <input type="email" placeholder="your@email.com" className={inputStyle} />
+              </div>
+
+              <div>
+                <label className={labelStyle}>Message</label>
+                <textarea 
+                  rows="3" 
+                  placeholder="Tell us about your sponsorship interests..." 
+                  className={`${inputStyle} resize-none`}
+                />
+              </div>
+
+              <button 
+                type="submit"
+                className="w-full py-4 bg-[#bc9c22] text-black font-black uppercase tracking-[0.3em] text-[11px] rounded-xl hover:bg-white transition-all duration-300 shadow-lg shadow-[#bc9c22]/10"
+              >
+                Send Message
+              </button>
+            </form>
+
+            {/* DIVIDER */}
+            <div className="flex items-center gap-4 py-8">
+              <div className="flex-grow h-[1px] bg-white/5"></div>
+              <span className="text-[10px] font-black text-zinc-700 uppercase tracking-widest">OR</span>
+              <div className="flex-grow h-[1px] bg-white/5"></div>
+            </div>
+
+            {/* REACH OUT DIRECTLY */}
+            <div className="space-y-4">
+              <label className={labelStyle}>Reach out directly</label>
+              <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl">
+                <span className="text-xs md:text-sm font-medium text-zinc-400">
+                  {OFFICIAL_EMAIL}
+                </span>
+                <button 
+                  onClick={copyToClipboard}
+                  className="px-4 py-2 bg-zinc-800 text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-zinc-700 transition-colors text-white"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
           </div>
-        </section>
+
+        </div>
       </main>
 
     </div>

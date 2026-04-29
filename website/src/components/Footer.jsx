@@ -16,7 +16,7 @@ const Footer = () => {
                 alt="SOFEA" 
                 className="w-12 h-12 object-contain" 
               />
-              <span className="text-2xl font-black tracking-tighter uppercase">SOFEA</span>
+              <span className="text-2xl font-black tracking-tighter uppercase">SOF-EA</span>
             </div>
             <p className="text-zinc-500 text-[11px] leading-relaxed max-w-xs uppercase tracking-widest font-medium">
               Software Engineering Association. <br />
@@ -75,7 +75,7 @@ const Footer = () => {
         {/* BOTTOM BAR */}
         <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[9px] tracking-[0.5em] text-zinc-700 uppercase">
-            © 2026 SOFEA ASSOCIATION • MJIIT UTM KUALA LUMPUR
+            © 2026 SOF-EA ASSOCIATION • MJIIT UTM KUALA LUMPUR
           </p>
           <div className="flex gap-8">
              <span className="text-[9px] tracking-widest text-zinc-800 uppercase">Privacy Policy</span>

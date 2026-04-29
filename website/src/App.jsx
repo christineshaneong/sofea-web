@@ -1,23 +1,26 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// Pages
 import Home from './pages/Home';
 import About from './pages/About'; 
 import Team from './pages/Team';
 import Recruitment from './pages/Recruitment';
 import SponsorPage from './pages/Sponsor';
 import Contact from './pages/Contact';
+import Shop from './pages/Shop';
+import Archive from './pages/Archive';
+import Events from './pages/Events';
+
+// Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import ScrollToTop from './components/ScrollToTop';
-import Events from './pages/Events';
-import MouseTrail from './components/MouseTrail'; // 1. Import MouseTrail globally
-import Archive from './pages/Archive'; // Add this import
-
+import ScrollToTop from './components/ScrollToTop'; // FIXED: Added this import
+import MouseTrail from './components/MouseTrail';
 
 function App() {
   return (
     <Router>
-      {/* 2. Global Layers: These show up on every page */}
       <ScrollToTop />
       <MouseTrail /> 
       <Navbar /> 
@@ -27,11 +30,9 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/team" element={<Team />} />
         <Route path="/recruitment" element={<Recruitment />} />
-        
-        {/* Unified Sponsor Route */}
         <Route path="/sponsor" element={<SponsorPage />} />
-        
         <Route path="/contact" element={<Contact />} />
+        <Route path="/shop" element={<Shop />} />
 
         {/* Events Routes */}
         <Route path="/events" element={<Events />} /> 

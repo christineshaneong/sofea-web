@@ -1,18 +1,16 @@
 import { createClient } from '@sanity/client';
-import imageUrlBuilder from '@sanity/image-url'; 
+import imageUrlBuilder from '@sanity/image-url'; // Use this import style
 
 const client = createClient({
   projectId: 'lhe7vych',
   dataset: 'production',
-  useCdn: false, // <--- CHANGE THIS TO FALSE
-  apiVersion: '2024-03-31', 
+  useCdn: true,
+  apiVersion: '2023-05-03',
 });
 
+// Use the builder like this to avoid the warning
 const builder = imageUrlBuilder(client);
 
-export const urlFor = (source) => {
-  if (!source) return { url: () => '' };
-  return builder.image(source);
-};
+export const urlFor = (source) => builder.image(source);
 
 export default client;

@@ -9,6 +9,7 @@ const AboutAccordion = () => {
     { id: 'about', title: 'ABOUT US', description: 'Discover our story and how we empower MJIIT students.', img: null, path: '/about' },
     { id: 'team', title: 'MEET THE TEAM', description: 'The passionate minds behind SOFEA working to bridge the gap.', img: null, path: '/team' },
     { id: 'archive', title: 'THE ARCHIVE', description: 'Explore the legacy of past committees and event milestones.', img: null, path: '/archive' },
+    { id: 'shop', title: 'THE SHOP', description: 'Exclusive SOF-EA gear. Limited drops for the community.', img: null, path: '/shop' }, // Positioned between Archive & Recruitment
     { id: 'recruitment', title: 'RECRUITMENT', description: 'Join the family! We are looking for Technical leads.', img: null, path: '/recruitment' },
     { id: 'sponsor', title: 'SPONSOR US', description: 'Partner with us to reach the next generation of engineers.', img: null, path: '/sponsor' },
     { id: 'contact', title: 'CONTACT', description: 'Reach out to our executive team directly.', img: null, path: '/contact' },
@@ -56,8 +57,7 @@ const AboutAccordion = () => {
 
           {/* TEXT CONTENT */}
           <div className="absolute inset-0 z-10 pointer-events-none flex flex-col justify-center items-center">
-            {/* TITLE: Removed 'italic' class here */}
-            <h3 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-[-90deg] whitespace-nowrap text-[9px] font-black tracking-[0.8em] text-zinc-400 transition-all duration-[800ms] group-hover:rotate-0 group-hover:text-[#bc9c22] group-hover:text-4xl group-hover:tracking-tighter uppercase">
+            <h3 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-[-90deg] whitespace-nowrap text-[9px] font-black uppercase tracking-[0.8em] text-zinc-400 transition-all duration-[800ms] group-hover:rotate-0 group-hover:text-[#bc9c22] group-hover:text-4xl group-hover:tracking-tighter">
               {section.title}
             </h3>
 

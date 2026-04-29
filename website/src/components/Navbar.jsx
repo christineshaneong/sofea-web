@@ -8,7 +8,7 @@ const Navbar = () => {
   return (
     <>
       <nav className="fixed top-0 left-0 w-full z-[110] px-6 py-6 flex justify-between items-center bg-transparent">
-        <div className="text-xl font-black uppercase tracking-tighter text-white">SOFEA</div>
+        <div className="text-xl font-black uppercase tracking-tighter text-white">SOF-EA</div>
 
         <div className="flex items-center gap-4">
           <motion.button
@@ -16,8 +16,8 @@ const Navbar = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className={`px-8 py-2 rounded-sm text-[10px] font-bold uppercase tracking-[0.3em] transition-all duration-300 z-[120] ${
               isMenuOpen 
-                ? 'bg-[#800000] text-white' // Maroon when menu is open
-                : 'bg-white text-black hover:bg-[#800000] hover:text-white' // White normally, Maroon on hover
+                ? 'bg-[#800000] text-white' 
+                : 'bg-white text-black hover:bg-[#800000] hover:text-white'
             }`}
           >
             {isMenuOpen ? 'Close ✕' : 'Menu ☰'}
@@ -25,7 +25,8 @@ const Navbar = () => {
         </div>
       </nav>
 
-      <NavOverlay isOpen={isMenuOpen} />
+      {/* THE FIX: Added setIsOpen prop here */}
+      <NavOverlay isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
     </>
   );
 };

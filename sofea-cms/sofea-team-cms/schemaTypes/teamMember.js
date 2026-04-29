@@ -13,13 +13,14 @@ export default {
       name: 'role',
       type: 'string',
       title: 'Role',
+      description: 'e.g., President, EXCO Multimedia, etc. (Must match the list in the code for sorting)'
     },
     {
-      name: 'roleOrder',
-      title: 'Priority Order',
-      type: 'number',
-      description: 'Use 1 for President, 2 for VP, etc. (Lower numbers show first)',
-      validation: Rule => Rule.required()
+      name: 'bio',
+      type: 'text',
+      title: 'Bio / Description',
+      description: 'This text appears on the back of the player card.',
+      rows: 3
     },
     {
       name: 'department',
@@ -27,9 +28,12 @@ export default {
       title: 'Department',
       options: {
         list: [
-          {title: 'Management', value: 'management'},
-          {title: 'EXCOS', value: 'excos'},
-          {title: 'Projects', value: 'projects'},
+          { title: 'Project Committee', value: 'Project Committee' },
+          { title: 'Propaganda and Student Enlightment', value: 'Propaganda and Student Enlightment' },
+          { title: 'Internal Affairs Division', value: 'Internal Affairs Division' },
+          { title: 'Finance & Entrepreneur Division', value: 'Finance & Entrepreneur Division' },
+          { title: 'Logistics & Operations Division', value: 'Logistics & Operations Division' },
+          { title: 'Sports & Games Division', value: 'Sports & Games Division' },
         ],
       }
     },
@@ -37,19 +41,14 @@ export default {
       name: 'photo',
       type: 'image',
       title: 'Photo',
-      options: {
-        hotspot: true,
-      },
+      options: { hotspot: true },
     },
     {
       name: 'year',
       title: 'Session Year',
       type: 'string',
-      description: 'Type the session (e.g., 2025/2026). The website will update automatically!',
-      validation: Rule => Rule.required().regex(/^\d{4}\/\d{4}$/, {
-        name: 'session format',
-        invert: false,
-      }).error('Please use the format YYYY/YYYY (e.g. 2025/2026)')
+      placeholder: '2025/2026',
+      validation: Rule => Rule.required()
     }
   ],
 }

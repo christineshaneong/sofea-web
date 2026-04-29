@@ -50,7 +50,7 @@ const RotatingLogo = () => {
           >
             <textPath 
               href="#textCircle" 
-              textLength="258"
+              textLength="266"
             >
               {phrase}{phrase}{phrase}
             </textPath>

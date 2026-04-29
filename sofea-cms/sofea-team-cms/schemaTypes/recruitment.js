@@ -1,19 +1,20 @@
 export default {
   name: 'recruitment',
-  title: 'Open Positions',
+  title: 'Recruitment Settings',
   type: 'document',
   fields: [
     {
-      name: 'title',
-      title: 'Job Title',
-      type: 'string',
-      description: 'e.g., Technical Lead',
+      name: 'applicationLink',
+      title: 'Global Application Link',
+      type: 'url',
+      description: 'The Google Form link for the "Apply as Committee Now" button',
     },
     {
-      name: 'applicationLink',
-      title: 'Application Link',
-      type: 'url',
-      description: 'Link to Google Form',
+      name: 'isLive',
+      title: 'Is Recruitment Live?',
+      type: 'boolean',
+      description: 'Toggle this off to hide the button or show a "Closed" message',
+      initialValue: true,
     },
   ],
 }

@@ -35,20 +35,35 @@ body {
   min-height: 100%;
 }
 
-/* --- MENU TYPEWRITER ENTRANCE --- */
+/* --- UPDATED STABLE TYPEWRITER --- */
 .menu-typewriter {
-  overflow: hidden;
-  white-space: nowrap;
-  width: 0;
   display: inline-block;
-  animation: menu-typing 0.4s steps(30, end) forwards;
+  white-space: nowrap;
+  /* Instead of width, we use a mask to reveal text from left to right */
+  mask-image: linear-gradient(to right, black 0%, black 0%, transparent 0%);
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  animation: menu-mask-reveal 0.6s ease-out forwards;
 }
 
-@keyframes menu-typing {
-  from { width: 0; }
-  to { width: 100%; }
+@keyframes menu-mask-reveal {
+  0% {
+    mask-image: linear-gradient(to right, black 0%, transparent 0%);
+  }
+  100% {
+    mask-image: linear-gradient(to right, black 100%, transparent 100%);
+  }
 }
 
+/* Staggered Delays (Keep these as they were) */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.15s; }
+.delay-3 { animation-delay: 0.2s; }
+.delay-4 { animation-delay: 0.25s; }
+.delay-5 { animation-delay: 0.3s; }
+.delay-6 { animation-delay: 0.35s; }
+.delay-7 { animation-delay: 0.4s; }
+.delay-8 { animation-delay: 0.45s; }
 /* Staggered Delays */
 .delay-1 { animation-delay: 0.1s; }
 .delay-2 { animation-delay: 0.2s; }
@@ -112,3 +127,96 @@ body {
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #000; }
 ::-webkit-scrollbar-thumb { background: var(--color-sofea-maroon); }
+/* --- CUSTOM MINI SCROLLBAR FOR FILTERS --- */
+.custom-mini-scroll::-webkit-scrollbar {
+  height: 4px; /* Very thin horizontal scrollbar */
+}
+
+.custom-mini-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.custom-mini-scroll::-webkit-scrollbar-thumb {
+  background: #800000; /* SOFEA Maroon */
+  border-radius: 10px;
+}
+
+.custom-mini-scroll::-webkit-scrollbar-thumb:hover {
+  background: #bc9c22; /* SOFEA Gold on hover */
+}
+
+/* --- PLAYER CARD FLIP LOGIC --- */
+.flip-card {
+  perspective: 1000px;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 12px;
+}
+
+/* --- UPDATED BACK OF CARD STYLE --- */
+.flip-card-back {
+  transform: rotateY(180deg);
+  background-color: #1a0000; /* Darker base maroon */
+  background-image: 
+    linear-gradient(45deg, rgba(128, 0, 0, 0.2) 25%, transparent 25%), 
+    linear-gradient(-45deg, rgba(128, 0, 0, 0.2) 25%, transparent 25%), 
+    linear-gradient(45deg, transparent 75%, rgba(128, 0, 0, 0.2) 75%), 
+    linear-gradient(-45deg, transparent 75%, rgba(128, 0, 0, 0.2) 75%);
+  background-size: 20px 20px; /* Size of the checkers */
+  background-position: 0 0, 0 10px, 10px 10px, 10px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  border: 2px solid #bc9c22;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Adds a subtle dark vignette to make sure text in center is readable */
+.flip-card-back::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.6) 100%);
+  pointer-events: none;
+}
+
+.flip-card-back-content {
+  position: relative;
+  z-index: 1; /* Sits above the checkered pattern */
+}
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: scroll 35s linear infinite;
+}
+
+.animate-marquee-slow {
+  animation: scroll 50s linear infinite;
+}
+
+/* Hover effects removed as requested */
