@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Award, Target, BrainCircuit } from 'lucide-react';
-import ReactPlayer from 'react-player'; 
 import Navbar from '../components/Navbar';
 import TechBackground from '../components/TechBackground';
 import client, { urlFor } from '../sanityClient';
@@ -10,6 +10,8 @@ const About = () => {
   const [data, setData] = useState({
     hero: null,
     missionVideoUrl: null,
+    recapVideoUrl: null,
+    recapText: "",
     founderImage: null,
     founderText: ""
   });
@@ -17,7 +19,9 @@ const About = () => {
   useEffect(() => {
     const query = `*[_type == "siteAssets"][0]{
       aboutHero, 
-      missionVideoUrl, 
+      "videoUrl": missionVideoFile.asset->url, 
+      "recapUrl": recapVideoFile.asset->url,
+      recapText,
       founderImage, 
       founderText
     }`;
@@ -26,12 +30,14 @@ const About = () => {
       if (res) {
         setData({
           hero: res.aboutHero ? urlFor(res.aboutHero).url() : null,
-          missionVideoUrl: res.missionVideoUrl || null,
+          missionVideoUrl: res.videoUrl || null,
+          recapVideoUrl: res.recapUrl || null,
+          recapText: res.recapText || "Celebrating a year of technical innovation and community growth at MJIIT.",
           founderImage: res.founderImage ? urlFor(res.founderImage).url() : null,
           founderText: res.founderText || "Founded by Dr. Halinawati, SOFEA was established to foster a community of excellence in software engineering at MJIIT."
         });
       }
-    });
+    }).catch(err => console.error("Sanity Error:", err));
   }, []);
 
   const values = [
@@ -41,27 +47,22 @@ const About = () => {
   ];
 
   return (
-    <div className="bg-black min-h-screen text-white selection:bg-[#bc9c22] overflow-x-hidden">
+    <div className="bg-black min-h-screen text-white selection:bg-[#bc9c22] overflow-x-hidden font-sans">
       <Navbar />
       
       {/* 1. HERO SECTION */}
       <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           {data.hero && (
-            <img 
-              src={data.hero} 
-              className="w-full h-full object-cover opacity-30 grayscale"
-              alt="About SOFEA"
-            />
+            <img src={data.hero} className="w-full h-full object-cover opacity-30 grayscale" alt="About SOFEA" />
           )}
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black"></div>
         </div>
-        
         <div className="relative z-10 text-center px-6">
           <h1 className="text-[12vw] md:text-9xl font-black uppercase tracking-tighter leading-none">
             About <span className="text-[#800000] drop-shadow-[0_4px_15px_rgba(128,0,0,0.8)]">SOFEA</span>
           </h1>
-          <p className="mt-6 text-zinc-400 max-w-2xl mx-auto text-sm md:text-xl font-light leading-relaxed px-4">
+          <p className="mt-6 text-zinc-400 max-w-2xl mx-auto text-sm md:text-xl font-light px-4">
             The <span className="text-white font-bold bg-[#bc9c22]/30 px-2 italic">largest student-run computing club at MJIIT</span>.
           </p>
         </div>
@@ -71,112 +72,128 @@ const About = () => {
         <TechBackground />
 
         {/* 2. OUR MISSION SECTION */}
-        <section className="relative z-10 py-24 md:py-32 px-6 md:px-20 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20 items-center">
-          <div className="relative flex justify-center order-1">
-            <div className="w-full max-w-[380px] aspect-[9/16] bg-zinc-900 rounded-[2rem] overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+        <section className="relative z-10 py-24 md:py-32 px-6 md:px-20 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="relative flex justify-center">
+            <div className="w-full max-w-[320px] md:max-w-[380px] aspect-[9/16] bg-zinc-900 rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl relative flex items-center justify-center">
               {data.missionVideoUrl ? (
-                <div className="w-full h-full relative">
-                  <ReactPlayer
-                    url={data.missionVideoUrl}
-                    width="100%"
-                    height="100%"
-                    controls={true}
-                    playsinline={true}
-                    light={true} // Bypasses localhost CORS issues - shows thumbnail first
-                  />
-                </div>
+                <video
+                  key={data.missionVideoUrl}
+                  src={data.missionVideoUrl}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  controls
+                  className="w-full h-full object-cover"
+                />
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center bg-zinc-900/50">
-                  <div className="w-12 h-12 border-2 border-dashed border-zinc-700 rounded-full mb-4 animate-pulse" />
+                <div className="w-full h-full flex flex-col items-center justify-center bg-zinc-900">
+                  <div className="w-12 h-12 border-2 border-dashed border-zinc-700 rounded-full animate-spin mb-4" />
+                  <p className="text-zinc-500 text-[10px] uppercase tracking-widest">Awaiting MP4 File...</p>
                 </div>
               )}
             </div>
-            <div className="absolute -top-4 -right-2 bg-[#800000] text-white font-black px-3 py-1 rotate-6 text-[10px] uppercase tracking-widest shadow-xl">
-              Latest Reel
+            <div className="absolute -top-4 -right-2 bg-[#800000] text-white font-black px-3 py-1 rotate-6 text-[10px] uppercase tracking-widest shadow-lg">
+              EST. 2023
             </div>
           </div>
 
-          <div className="order-2 text-center lg:text-left">
-            <h2 className="text-[#bc9c22] text-4xl md:text-7xl font-black uppercase mb-6 md:mb-10 tracking-tighter">
-              Our Mission
-            </h2>
-            <div className="space-y-6 md:space-y-8 text-zinc-300 text-sm md:text-xl leading-relaxed">
+          <div className="text-center lg:text-left mt-12 lg:mt-0">
+            <h2 className="text-[#bc9c22] text-4xl md:text-7xl font-black uppercase mb-6 tracking-tighter">Our Mission</h2>
+            <div className="space-y-6 text-zinc-300 text-sm md:text-xl leading-relaxed px-4 md:px-0">
               <p>We strive to <span className="text-white font-bold border-b border-[#bc9c22]">upskill students</span> through high-quality events, workshops, and hackathons.</p>
-              <p>We aim to make coding enjoyable and accessible to all, offering students <span className="text-white font-bold italic underline">real-world experience</span>.</p>
+              <p>We aim to make coding enjoyable and accessible to all.</p>
             </div>
           </div>
         </section>
 
         {/* 3. VALUES SECTION */}
-        <section className="relative z-10 py-16 md:py-32 bg-white/[0.02] backdrop-blur-md border-y border-white/5">
+        <section className="relative z-10 py-16 bg-white/[0.02] backdrop-blur-md border-y border-white/5">
           <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-3xl md:text-7xl font-black uppercase mb-12 md:mb-24 text-center tracking-tighter">SOFEA's Values</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16">
-              {values.map((value, i) => (
-                <div key={i} className="group text-center">
-                  <div className="flex justify-center mb-4 md:mb-8 text-[#bc9c22] transform group-hover:scale-110 transition-transform duration-500">
-                    <value.icon size={56} strokeWidth={1} />
-                  </div>
-                  <h4 className="text-xl md:text-2xl font-black uppercase mb-2 md:mb-4 tracking-tighter">{value.title}</h4>
-                  <p className="text-zinc-500 text-[10px] md:text-sm leading-relaxed uppercase tracking-widest font-medium max-w-[250px] mx-auto px-4">
-                    {value.desc}
-                  </p>
+            <h2 className="text-3xl md:text-7xl font-black uppercase mb-12 text-center tracking-tighter">SOFEA's Values</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              {values.map((v, i) => (
+                <div key={i} className="text-center">
+                  <div className="flex justify-center mb-4 text-[#bc9c22]"><v.icon size={48} /></div>
+                  <h4 className="text-xl font-black uppercase mb-2">{v.title}</h4>
+                  <p className="text-zinc-500 text-xs uppercase tracking-widest px-8">{v.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* 4. FOUNDER SECTION (Original Color Image) */}
-        <section className="relative z-10 py-24 md:py-32 px-6 md:px-20 max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-stretch gap-8 md:gap-16 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-md p-2 rounded-[2.5rem] border border-white/5 relative">
-            
-            <div className="w-full md:w-1/3 aspect-[3/4] md:h-[450px] relative flex-shrink-0">
-              {/* Thick Maroon Border Frame */}
-              <div className="absolute inset-0 border-[6px] border-[#800000] rounded-[2rem] z-20 pointer-events-none shadow-[0_0_20px_rgba(128,0,0,0.2)]"></div>
-              {data.founderImage ? (
+        {/* 4. FOUNDER SECTION */}
+        <section className="relative z-10 py-24 px-6 md:px-20 max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center gap-10 md:gap-20 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-md p-8 md:p-12 rounded-[2.5rem] border border-white/5">
+            <div className="w-56 md:w-1/4 aspect-[3/4] max-h-[320px] md:max-h-[380px] relative flex-shrink-0">
+              <div className="absolute inset-0 border-[3px] md:border-[4px] border-[#800000] rounded-[2rem] z-20 pointer-events-none shadow-[0_0_30px_rgba(128,0,0,0.3)]"></div>
+              {data.founderImage && (
                 <img 
                   src={data.founderImage} 
+                  className="w-full h-full object-cover rounded-[2rem]" 
                   alt="Dr. Halinawati" 
-                  className="w-full h-full object-cover rounded-[2rem]" // Removed grayscale class
                 />
-              ) : (
-                <div className="w-full h-full bg-zinc-900 rounded-[2rem] flex items-center justify-center text-zinc-600 uppercase font-black text-xs tracking-widest">
-                  Founder Photo
-                </div>
               )}
             </div>
-
-            <div className="flex flex-col justify-center py-8 md:pr-12">
-              <p className="text-[#bc9c22] text-xs font-black uppercase tracking-[0.4em] mb-4">The Visionary</p>
-              <h3 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none text-white mb-8">
+            <div className="flex flex-col justify-center text-center md:text-left">
+              <p className="text-[#bc9c22] text-[10px] md:text-xs font-black uppercase tracking-[0.4em] mb-4">The Visionary</p>
+              <h3 className="text-3xl md:text-6xl font-black uppercase tracking-tighter text-white mb-6 md:mb-8 leading-none">
                 Founded by <br />
                 <span className="text-[#800000] drop-shadow-[0_2px_10px_rgba(128,0,0,0.5)]">Dr. Halinawati</span>
               </h3>
-              
-              <div className="relative">
-                <span className="absolute -top-6 -left-4 text-6xl text-white/10 font-serif">“</span>
-                <p className="text-zinc-300 text-base md:text-xl font-light leading-relaxed italic relative z-10">
-                  {data.founderText}
-                </p>
-              </div>
-              <div className="mt-8 pt-8 border-t border-white/10">
-                <p className="text-zinc-500 text-[10px] uppercase tracking-[0.3em] font-bold">Software Engineering Association • MJIIT</p>
-              </div>
+              <p className="text-zinc-300 text-sm md:text-xl font-light leading-relaxed italic max-w-2xl mx-auto md:mx-0">
+                "{data.founderText}"
+              </p>
             </div>
           </div>
         </section>
 
-        {/* 5. RECRUITMENT SECTION */}
-        <section className="relative z-10 py-16 pb-32 px-6">
-          <div className="max-w-5xl mx-auto bg-gradient-to-br from-[#bc9c22]/10 to-transparent border border-white/5 p-8 md:p-24 rounded-[3rem] relative overflow-hidden text-center lg:text-left backdrop-blur-xl">
-             <h2 className="text-3xl md:text-6xl font-black uppercase mb-6 md:mb-8 tracking-tighter">Where are we now?</h2>
-             <p className="text-zinc-400 text-sm md:text-xl leading-relaxed mb-8 md:mb-12 max-w-3xl px-2 md:px-0">
-               SOFEA's exponential growth has led us to become <span className="bg-[#bc9c22]/30 px-2 text-white italic">one of Malaysia's emerging student computing societies</span>.
-             </p>
-             <Link to="/recruitment" className="inline-block bg-white text-black font-black uppercase px-10 py-5 text-[10px] tracking-[0.3em] hover:bg-[#800000] hover:text-white transition-all text-center w-full md:w-auto">
-               Join the Committee
-             </Link>
+        {/* 5. 24/25 RECAP SECTION - REORDERED */}
+        <section className="relative z-10 py-24 border-t border-zinc-900 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6">
+            
+            {/* Header moved to the very top */}
+            <div className="mb-12 text-center lg:text-left">
+              <h2 className="text-[#800000] text-[10px] md:text-xs font-bold uppercase tracking-[0.4em] mb-4">Season Archive</h2>
+              <h3 className="text-5xl md:text-8xl font-black uppercase tracking-tighter text-white leading-none">
+                24/25 <span className="text-[#bc9c22] italic">Recap</span>
+              </h3>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              
+              {/* VIDEO COLUMN */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="relative w-full aspect-video bg-zinc-900 border border-white/5 shadow-2xl rounded-2xl md:rounded-[2rem] overflow-hidden"
+              >
+                {data.recapVideoUrl ? (
+                  <video
+                    src={data.recapVideoUrl}
+                    controls
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <p className="text-zinc-600 text-[10px] uppercase tracking-widest italic">Video Loading...</p>
+                  </div>
+                )}
+                <div className="absolute top-4 left-4 w-6 h-6 border-t border-l border-[#800000] z-20 pointer-events-none" />
+                <div className="absolute bottom-4 right-4 w-6 h-6 border-b border-r border-[#bc9c22] z-20 pointer-events-none opacity-50" />
+              </motion.div>
+
+              {/* TEXT COLUMN */}
+              <div className="flex flex-col text-center lg:text-left">
+                <div className="text-zinc-400 text-sm md:text-lg font-light leading-relaxed space-y-4 max-w-lg mx-auto lg:mx-0">
+                  <p className="whitespace-pre-line">{data.recapText}</p>
+                </div>
+              </div>
+
+            </div>
           </div>
         </section>
       </div>

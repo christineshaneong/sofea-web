@@ -13,29 +13,33 @@ export default {
       name: 'role',
       type: 'string',
       title: 'Role',
-      description: 'e.g., President, EXCO Multimedia, etc. (Must match the list in the code for sorting)'
+      description: 'e.g., Club Advisor, President, EXCO Multimedia'
     },
     {
       name: 'bio',
       type: 'text',
       title: 'Bio / Description',
-      description: 'This text appears on the back of the player card.',
       rows: 3
     },
     {
-      name: 'department',
-      type: 'string',
-      title: 'Department',
+      name: 'departments', // Changed to plural
+      type: 'array',
+      title: 'Departments / Filters',
+      description: 'Select all that apply. Members will show up in every filter selected here.',
+      of: [{ type: 'string' }],
       options: {
         list: [
-          { title: 'Project Committee', value: 'Project Committee' },
+          { title: 'Club Advisor', value: 'Club Advisor' },
+          { title: 'High Committees', value: 'High Committees' },
+          { title: 'Project Committees', value: 'Project Committees' },
           { title: 'Propaganda and Student Enlightment', value: 'Propaganda and Student Enlightment' },
           { title: 'Internal Affairs Division', value: 'Internal Affairs Division' },
           { title: 'Finance & Entrepreneur Division', value: 'Finance & Entrepreneur Division' },
           { title: 'Logistics & Operations Division', value: 'Logistics & Operations Division' },
           { title: 'Sports & Games Division', value: 'Sports & Games Division' },
         ],
-      }
+      },
+      validation: Rule => Rule.required().min(1)
     },
     {
       name: 'photo',

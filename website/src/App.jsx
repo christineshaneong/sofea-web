@@ -11,6 +11,9 @@ import Contact from './pages/Contact';
 import Shop from './pages/Shop';
 import Archive from './pages/Archive';
 import Events from './pages/Events';
+import News from './pages/News';
+
+
 
 // Components
 import Navbar from './components/Navbar';
@@ -33,10 +36,12 @@ function App() {
         <Route path="/sponsor" element={<SponsorPage />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/shop" element={<Shop />} />
+        
+        {/* BOTH of these now use the same News component */}
+        <Route path="/news" element={<News />} />
+        <Route path="/news/:slug" element={<News />} /> 
 
-        {/* Events Routes */}
         <Route path="/events" element={<Events />} /> 
-        <Route path="/event/:id" element={<Events />} /> 
         <Route path="/archive" element={<Archive />} />
       </Routes>
 

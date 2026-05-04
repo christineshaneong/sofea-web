@@ -14,7 +14,9 @@ const Team = () => {
 
   const categories = [
     'All',
-    'Project Committee',
+    'Club Advisor',
+    'High Committees',
+    'Project Committees',
     'Propaganda and Student Enlightment',
     'Internal Affairs Division',
     'Finance & Entrepreneur Division',
@@ -22,12 +24,36 @@ const Team = () => {
     'Sports & Games Division'
   ];
 
-  const roleOrder = [
-    "President", "Vice President I", "Vice President II", "Secretary", "Treasurer", 
+  // 25/26 & General Order
+  const standardOrder = [
+    "Club Advisor", "President", "Vice President I", "Vice President II", "Secretary", "Treasurer", 
     "Vice Secretary I", "Vice Secretary II", "Vice Treasurer", "Project Director", "Project Officer", 
     "Project Manager I", "Project Manager II", "Project Manager III", "Project Manager IV", 
     "EXCO Liaison", "EXCO Marketing", "EXCO Multimedia", "EXCO HR", "EXCO Logistics", 
     "EXCO Sports", "EXCO Entrepreneur"
+  ];
+
+  // 23/24 Specific Order
+  const session2324Order = [
+    "Club Coordinator", 
+    "Club Advisor",
+    "President", 
+    "Deputy President I", 
+    "Deputy President II", 
+    "Secretary", 
+    "Treasurer", 
+    "Deputy Secretary", 
+    "Deputy Treasurer", 
+    "Exco Multimedia", 
+    "Multimedia Expert", 
+    "Exco Marketing", 
+    "Marketing Expert", 
+    "Exco Sports", 
+    "Sports Expert", 
+    "Exco Business", 
+    "Business Expert", 
+    "Exco Logistics", 
+    "Logistics Expert"
   ];
 
   useEffect(() => {
@@ -45,11 +71,31 @@ const Team = () => {
   useEffect(() => {
     setLoading(true);
     client.fetch(`*[_type == "teamMember" && year == "${selectedSession}"]`).then((data) => {
+      const currentOrder = selectedSession === "23/24" ? session2324Order : standardOrder;
+
       const sortedData = data.sort((a, b) => {
-        const indexA = roleOrder.indexOf(a.role);
-        const indexB = roleOrder.indexOf(b.role);
-        return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
+        // Normalization function to handle spelling/casing differences
+        const normalize = (str) => 
+          (str || "")
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, ' ') // Remove double spaces
+            .replace("vice president", "deputy president")
+            .replace("vice secretary", "deputy secretary")
+            .replace("vice treasurer", "deputy treasurer");
+
+        const roleA = normalize(a.role);
+        const roleB = normalize(b.role);
+
+        const indexA = currentOrder.findIndex(r => normalize(r) === roleA);
+        const indexB = currentOrder.findIndex(r => normalize(r) === roleB);
+
+        const rankA = indexA === -1 ? 999 : indexA;
+        const rankB = indexB === -1 ? 999 : indexB;
+
+        return rankA - rankB;
       });
+
       setMembers(sortedData);
       setLoading(false);
     });
@@ -58,7 +104,9 @@ const Team = () => {
   const getHeroBackground = () => {
     if (!siteAssets) return '';
     const backgroundMap = {
-      'Project Committee': siteAssets.projectHero,
+      'Club Advisor': siteAssets.teamHero,
+      'High Committees': siteAssets.teamHero,
+      'Project Committees': siteAssets.projectHero,
       'Propaganda and Student Enlightment': siteAssets.propagandaHero,
       'Internal Affairs Division': siteAssets.internalHero,
       'Finance & Entrepreneur Division': siteAssets.financeHero,
@@ -69,7 +117,9 @@ const Team = () => {
     return selected ? urlFor(selected).url() : '';
   };
 
-  const filteredMembers = members.filter((m) => activeFilter === 'All' || m.department === activeFilter);
+  const filteredMembers = members.filter((m) => 
+    activeFilter === 'All' || (m.departments && m.departments.includes(activeFilter))
+  );
 
   return (
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#800000] overflow-x-hidden">
@@ -113,7 +163,7 @@ const Team = () => {
               <select 
                 value={selectedSession}
                 onChange={(e) => setSelectedSession(e.target.value)}
-                className="bg-zinc-900 border border-zinc-800 text-[#bc9c22] text-[10px] font-black uppercase py-1.5 px-3 rounded"
+                className="bg-zinc-900 border border-zinc-800 text-[#bc9c22] text-[10px] font-black uppercase py-1.5 px-3 rounded outline-none cursor-pointer"
               >
                 {allSessions.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
@@ -141,13 +191,7 @@ const Team = () => {
             {filteredMembers.map((member) => (
               <div key={member._id} className="flip-card h-[380px] md:h-[480px]">
                 <div className="flip-card-inner">
-                  {/* FRONT */}
                   <div className="flip-card-front bg-zinc-950 border border-white/5 overflow-hidden flex flex-col shadow-2xl">
-                    <div className="absolute top-4 left-4 z-20">
-                      <span className="bg-[#bc9c22] text-black text-[7px] font-black uppercase px-2 py-0.5 rounded-sm">
-                        {member.department === "Management" ? "MANAGEMENT" : (member.department?.split(' ')[0] || "SOFEA")}
-                      </span>
-                    </div>
                     <div className="h-3/4 overflow-hidden relative">
                       {member.photo && <img src={urlFor(member.photo).url()} alt={member.name} className="w-full h-full object-cover" />}
                       <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-60"></div>
@@ -158,17 +202,18 @@ const Team = () => {
                     </div>
                   </div>
 
-                  {/* BACK - TACTICAL INTEL */}
                   <div className="flip-card-back p-8 flex flex-col justify-center text-left">
                     <div className="card-back-inner">
                       <div className="w-8 h-1 bg-[#bc9c22] mb-6" />
                       <h4 className="text-lg font-black uppercase italic mb-3 tracking-tighter text-white">INTEL</h4>
                       <p className="text-[10px] md:text-xs text-white/90 leading-relaxed font-medium">
-                        {member.bio || `A vital component of the ${member.department} division. Contributing to the growth of MJIIT's software engineering community.`}
+                        {member.bio || `Official ${member.role} for SOFEA MJIIT.`}
                       </p>
                       <div className="mt-10 pt-4 border-t border-white/10">
-                        <p className="text-[8px] font-black uppercase tracking-widest text-[#bc9c22]">DIVISION CODE</p>
-                        <p className="text-[9px] font-bold uppercase text-white/50">{member.department}</p>
+                        <p className="text-[8px] font-black uppercase tracking-widest text-[#bc9c22]">ASSIGNED DIVISIONS</p>
+                        <p className="text-[9px] font-bold uppercase text-white/50">
+                          {member.departments?.join(' • ') || 'General'}
+                        </p>
                       </div>
                     </div>
                   </div>

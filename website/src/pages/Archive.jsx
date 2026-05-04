@@ -3,12 +3,26 @@ import { motion, AnimatePresence } from 'framer-motion';
 import client from '../sanityClient';
 import imageUrlBuilder from '@sanity/image-url';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 
 const builder = imageUrlBuilder(client);
 const urlFor = (source) => builder.image(source);
 
-const ROLE_HIERARCHY = ["President", "Vice President I", "Vice President II", "Secretary", "Treasurer", "Vice Secretary I", "Vice Secretary II", "Vice Treasurer", "Project Director", "Project Manager I", "Project Manager II", "Project Manager III", "Project Manager IV", "EXCO Liaison", "EXCO Marketing", "EXCO Multimedia", "EXCO HR", "EXCO Logistics", "EXCO Sports", "EXCO Entrepreneur"];
+// Standard Order (25/26 and default)
+const STANDARD_HIERARCHY = [
+  "Club Advisor", "President", "Vice President I", "Vice President II", "Secretary", "Treasurer", 
+  "Vice Secretary I", "Vice Secretary II", "Vice Treasurer", "Project Director", "Project Officer", 
+  "Project Manager I", "Project Manager II", "Project Manager III", "Project Manager IV", 
+  "EXCO Liaison", "EXCO Marketing", "EXCO Multimedia", "EXCO HR", "EXCO Logistics", 
+  "EXCO Sports", "EXCO Entrepreneur"
+];
+
+// Specific 23/24 Order
+const SESSION_2324_HIERARCHY = [
+  "Club Coordinator", "Club Advisor", "President", "Deputy President I", "Deputy President II", 
+  "Secretary", "Treasurer", "Deputy Secretary", "Deputy Treasurer", "Exco Multimedia", 
+  "Multimedia Expert", "Exco Marketing", "Marketing Expert", "Exco Sports", "Sports Expert", 
+  "Exco Business", "Business Expert", "Exco Logistics", "Logistics Expert"
+];
 
 const Archive = () => {
   const [view, setView] = useState('committee'); 
@@ -37,10 +51,29 @@ const Archive = () => {
 
     client.fetch(query).then((res) => {
       if (view === 'committee') {
+        const currentOrder = selectedYear === "23/24" ? SESSION_2324_HIERARCHY : STANDARD_HIERARCHY;
+
         const sortedCommittee = [...res].sort((a, b) => {
-          const indexA = ROLE_HIERARCHY.indexOf(a.role);
-          const indexB = ROLE_HIERARCHY.indexOf(b.role);
-          return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+          // Normalize strings to handle "Vice" vs "Deputy" and Case sensitivity
+          const normalize = (str) => 
+            (str || "")
+              .toLowerCase()
+              .trim()
+              .replace(/\s+/g, ' ')
+              .replace("vice president", "deputy president")
+              .replace("vice secretary", "deputy secretary")
+              .replace("vice treasurer", "deputy treasurer");
+
+          const roleA = normalize(a.role);
+          const roleB = normalize(b.role);
+
+          const indexA = currentOrder.findIndex(r => normalize(r) === roleA);
+          const indexB = currentOrder.findIndex(r => normalize(r) === roleB);
+
+          const rankA = indexA === -1 ? 999 : indexA;
+          const rankB = indexB === -1 ? 999 : indexB;
+
+          return rankA - rankB;
         });
         setData(sortedCommittee);
       } else {
@@ -55,7 +88,7 @@ const Archive = () => {
       <Navbar />
 
       <main>
-        {/* HERO SECTION - Inspired by Team Page */}
+        {/* HERO SECTION */}
         <section className="relative h-[40vh] flex items-center justify-center bg-zinc-950">
           <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
           <div className="relative z-10 text-center px-6">
@@ -72,12 +105,11 @@ const Archive = () => {
           </div>
         </section>
 
-        {/* STICKY BAR - Same logic as Team Page */}
+        {/* STICKY BAR */}
         <nav className="sticky top-[70px] z-40 bg-black/95 backdrop-blur-md py-6 border-b border-white/5 shadow-2xl">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               
-              {/* TOGGLE */}
               <div className="flex bg-zinc-900/80 p-1.5 rounded-full border border-white/10 w-full md:w-auto">
                 {['committee', 'events'].map((type) => (
                   <button
@@ -92,7 +124,6 @@ const Archive = () => {
                 ))}
               </div>
 
-              {/* SESSION SELECTOR */}
               <div className="relative w-full md:w-auto">
                 <select 
                   value={selectedYear}
@@ -128,6 +159,7 @@ const Archive = () => {
                     layout
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
                     key={item._id} 
                     className="group bg-zinc-900/30 border border-white/5 flex flex-col h-full hover:border-[#800000]/50 transition-all duration-500 rounded-sm overflow-hidden"
                   >
@@ -136,6 +168,7 @@ const Archive = () => {
                         <img 
                           src={urlFor(view === 'committee' ? item.photo : item.mainImage).width(600).url()} 
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          alt={item.name || item.title}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-zinc-700 text-[10px] uppercase font-black tracking-tighter">No Image</div>
