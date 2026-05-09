@@ -17,12 +17,9 @@ const urlFor = (source) => builder.image(source);
 
 /**
  * MARQUEE COMPONENT
- * Handles the infinite scrolling of partner logos
  */
 const Marquee = ({ images, speed = 25, reverse = false }) => {
   if (!images || images.length === 0) return null;
-
-  // Triple the array to ensure a seamless infinite loop without gaps
   const duplicatedImages = [...images, ...images, ...images];
 
   return (
@@ -47,8 +44,6 @@ const Marquee = ({ images, speed = 25, reverse = false }) => {
           />
         ))}
       </motion.div>
-      
-      {/* Visual edge fades */}
       <div className="absolute inset-y-0 left-0 w-16 md:w-32 bg-gradient-to-r from-black to-transparent z-10" />
       <div className="absolute inset-y-0 right-0 w-16 md:w-32 bg-gradient-to-l from-black to-transparent z-10" />
     </div>
@@ -58,40 +53,23 @@ const Marquee = ({ images, speed = 25, reverse = false }) => {
 const ModernReveal = ({ lines }) => {
   const container = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.1 }
-    }
+    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } }
   };
-
   const item = {
     hidden: { y: "110%" },
-    visible: {
-      y: 0,
-      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
-    }
+    visible: { y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
   };
 
   return (
     <motion.div variants={container} initial="hidden" animate="visible" className="flex flex-col items-center lg:items-start">
       {lines.map((line, index) => (
         <div key={index} className="overflow-hidden h-fit w-fit pr-4 -mr-4"> 
-          <motion.span 
-            variants={item} 
-            className="block text-[11vw] md:text-[100px] font-black uppercase tracking-tighter leading-[0.85] italic py-1"
-          >
-            {line === "UTM KL" ? (
-              <>UTM <span className="text-[#800000]">KL</span></>
-            ) : line}
+          <motion.span variants={item} className="block text-[11vw] md:text-[100px] font-black uppercase tracking-tighter leading-[0.85] italic py-1">
+            {line === "UTM KL" ? (<>UTM <span className="text-[#800000]">KL</span></>) : line}
           </motion.span>
         </div>
       ))}
-      <motion.div 
-        initial={{ width: 0 }} 
-        animate={{ width: 80 }} 
-        transition={{ delay: 0.6, duration: 1 }} 
-        className="h-[2px] bg-[#bc9c22] mt-6" 
-      />
+      <motion.div initial={{ width: 0 }} animate={{ width: 80 }} transition={{ delay: 0.6, duration: 1 }} className="h-[2px] bg-[#bc9c22] mt-6" />
     </motion.div>
   );
 };
@@ -177,8 +155,8 @@ const Home = () => {
             </div>
           </section>
 
-          {/* EVENTS SECTION */}
-          <section className="py-24 px-6 md:px-16 lg:px-24">
+          {/* EVENTS SECTION - ADDED ID AND SCROLL MARGIN HERE */}
+          <section id="upcoming-events" className="py-24 px-6 md:px-16 lg:px-24 scroll-mt-24">
             <div className="max-w-7xl mx-auto">
               <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
                 <div>
@@ -219,8 +197,6 @@ const Home = () => {
           {/* PARTNERS SECTION */}
           <section className="py-24 px-6 md:px-16 lg:px-24 bg-black">
             <div className="max-w-7xl mx-auto space-y-24">
-              
-              {/* Strategic Partners Row */}
               <div className="relative text-center">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black px-6 z-20">
                   <span className="text-[#bc9c22] text-[10px] md:text-xs font-black uppercase tracking-[0.6em]">Strategic Partners</span>
@@ -231,8 +207,6 @@ const Home = () => {
                   )}
                 </div>
               </div>
-
-              {/* Official Collaborations Row */}
               <div className="relative text-center">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black px-6 z-20">
                   <span className="text-zinc-500 text-[10px] md:text-xs font-black uppercase tracking-[0.6em]">Official Collaborations</span>
@@ -243,7 +217,6 @@ const Home = () => {
                   )}
                 </div>
               </div>
-
             </div>
           </section>
 

@@ -101,7 +101,6 @@ const Recruitment = () => {
         </section>
       </main>
 
-      <Footer />
     </div>
   );
 };

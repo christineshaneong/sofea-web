@@ -10,15 +10,13 @@ import SponsorPage from './pages/Sponsor';
 import Contact from './pages/Contact';
 import Shop from './pages/Shop';
 import Archive from './pages/Archive';
-import Events from './pages/Events';
+import Events from './pages/Events'; // This component handles both list and detail
 import News from './pages/News';
-
-
 
 // Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import ScrollToTop from './components/ScrollToTop'; // FIXED: Added this import
+import ScrollToTop from './components/ScrollToTop';
 import MouseTrail from './components/MouseTrail';
 
 function App() {
@@ -37,11 +35,15 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/shop" element={<Shop />} />
         
-        {/* BOTH of these now use the same News component */}
+        {/* News routes */}
         <Route path="/news" element={<News />} />
         <Route path="/news/:slug" element={<News />} /> 
 
+        {/* --- FIXED EVENT ROUTES --- */}
         <Route path="/events" element={<Events />} /> 
+        {/* Add this line below to handle specific event clicks */}
+        <Route path="/event/:id" element={<Events />} /> 
+        
         <Route path="/archive" element={<Archive />} />
       </Routes>
 

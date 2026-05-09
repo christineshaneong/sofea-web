@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom'; // Import Link
 import NavOverlay from './NavOverlay'; 
 
 const Navbar = () => {
@@ -8,7 +9,13 @@ const Navbar = () => {
   return (
     <>
       <nav className="fixed top-0 left-0 w-full z-[110] px-6 py-6 flex justify-between items-center bg-transparent">
-        <div className="text-xl font-black uppercase tracking-tighter text-white">SOF-EA</div>
+        {/* WRAPPED IN LINK FOR HOMEPAGE NAVIGATION */}
+        <Link 
+          to="/" 
+          className="text-xl font-black uppercase tracking-tighter text-white hover:text-[#bc9c22] transition-colors duration-300 cursor-pointer"
+        >
+          SOF-EA
+        </Link>
 
         <div className="flex items-center gap-4">
           <motion.button
@@ -25,7 +32,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* THE FIX: Added setIsOpen prop here */}
       <NavOverlay isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
     </>
   );
