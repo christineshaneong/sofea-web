@@ -122,7 +122,7 @@ const Home = () => {
             <div className="text-center lg:text-left order-2 -mt-10 md:mt-0">
               <ModernReveal lines={["SOF-EA", "MJIIT", "UTM KL"]} />
               <p className="text-zinc-400 mt-10 text-base max-w-sm mx-auto lg:mx-0 leading-relaxed font-light mb-12">
-                The premier software engineering association at MJIIT. Bridging the gap between academic learning and industry excellence.
+                The premier software engineering society at MJIIT. Bridging the gap between academic learning and industry excellence.
               </p>
               <Link to="/recruitment" className="inline-block px-10 py-4 bg-white text-black font-bold uppercase text-[10px] tracking-[0.2em] hover:bg-[#800000] hover:text-white transition-all duration-300">
                 Become a Committee
