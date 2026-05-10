@@ -2,20 +2,18 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import client, { urlFor } from '../sanityClient';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getCurrentSession } from '../utils/session';
 
 const Team = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [siteAssets, setSiteAssets] = useState(null);
-  const [selectedSession, setSelectedSession] = useState(getCurrentSession());
-  const [allSessions, setAllSessions] = useState([]);
+  const [currentSession, setCurrentSession] = useState("");
 
   const categories = [
     'All',
     'Club Advisor',
-    'High Committees',
+    'High Council',
     'Project Committees',
     'Propaganda and Student Enlightment',
     'Internal Affairs Division',
@@ -24,7 +22,6 @@ const Team = () => {
     'Sports & Games Division'
   ];
 
-  // 25/26 & General Order
   const standardOrder = [
     "Club Advisor", "President", "Vice President I", "Vice President II", "Secretary", "Treasurer", 
     "Vice Secretary I", "Vice Secretary II", "Vice Treasurer", "Project Director", "Project Officer", 
@@ -33,53 +30,27 @@ const Team = () => {
     "EXCO Sports", "EXCO Entrepreneur"
   ];
 
-  // 23/24 Specific Order
-  const session2324Order = [
-    "Club Coordinator", 
-    "Club Advisor",
-    "President", 
-    "Deputy President I", 
-    "Deputy President II", 
-    "Secretary", 
-    "Treasurer", 
-    "Deputy Secretary", 
-    "Deputy Treasurer", 
-    "Exco Multimedia", 
-    "Multimedia Expert", 
-    "Exco Marketing", 
-    "Marketing Expert", 
-    "Exco Sports", 
-    "Sports Expert", 
-    "Exco Business", 
-    "Business Expert", 
-    "Exco Logistics", 
-    "Logistics Expert"
-  ];
-
   useEffect(() => {
     client.fetch(`*[_type == "siteAssets"][0]`).then(setSiteAssets);
+    
+    // Auto-detect the latest session from the database
     client.fetch(`*[_type == "teamMember"].year`).then((data) => {
       if (data && data.length > 0) {
-        const uniqueSessions = [...new Set(data)].sort((a, b) => b.localeCompare(a));
-        setAllSessions(uniqueSessions);
-      } else {
-        setAllSessions([getCurrentSession()]);
+        // Sort sessions (e.g., 26/27 > 25/26) and pick the top one
+        const latest = [...new Set(data)].sort((a, b) => b.localeCompare(a))[0];
+        setCurrentSession(latest);
       }
     });
   }, []);
 
   useEffect(() => {
-    setLoading(true);
-    client.fetch(`*[_type == "teamMember" && year == "${selectedSession}"]`).then((data) => {
-      const currentOrder = selectedSession === "23/24" ? session2324Order : standardOrder;
+    if (!currentSession) return;
 
+    setLoading(true);
+    client.fetch(`*[_type == "teamMember" && year == "${currentSession}"]`).then((data) => {
       const sortedData = data.sort((a, b) => {
-        // Normalization function to handle spelling/casing differences
         const normalize = (str) => 
-          (str || "")
-            .toLowerCase()
-            .trim()
-            .replace(/\s+/g, ' ') // Remove double spaces
+          (str || "").toLowerCase().trim().replace(/\s+/g, ' ')
             .replace("vice president", "deputy president")
             .replace("vice secretary", "deputy secretary")
             .replace("vice treasurer", "deputy treasurer");
@@ -87,25 +58,22 @@ const Team = () => {
         const roleA = normalize(a.role);
         const roleB = normalize(b.role);
 
-        const indexA = currentOrder.findIndex(r => normalize(r) === roleA);
-        const indexB = currentOrder.findIndex(r => normalize(r) === roleB);
+        const indexA = standardOrder.findIndex(r => normalize(r) === roleA);
+        const indexB = standardOrder.findIndex(r => normalize(r) === roleB);
 
-        const rankA = indexA === -1 ? 999 : indexA;
-        const rankB = indexB === -1 ? 999 : indexB;
-
-        return rankA - rankB;
+        return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
       });
 
       setMembers(sortedData);
       setLoading(false);
     });
-  }, [selectedSession]);
+  }, [currentSession]);
 
   const getHeroBackground = () => {
     if (!siteAssets) return '';
     const backgroundMap = {
       'Club Advisor': siteAssets.teamHero,
-      'High Committees': siteAssets.teamHero,
+      'High Council': siteAssets.teamHero,
       'Project Committees': siteAssets.projectHero,
       'Propaganda and Student Enlightment': siteAssets.propagandaHero,
       'Internal Affairs Division': siteAssets.internalHero,
@@ -149,26 +117,16 @@ const Team = () => {
                   {activeFilter === 'All' ? 'Meet Our Team' : activeFilter}
                 </h1>
                 <p className="mt-4 text-[#bc9c22] font-black tracking-[0.4em] uppercase text-[10px] md:text-xs">
-                  {activeFilter === 'All' ? 'The Crew Behind SOFEA' : `Official Division • ${selectedSession}`}
+                  {activeFilter === 'All' ? 'The Crew Behind SOFEA' : `Official Division • ${currentSession}`}
                 </p>
               </motion.div>
             </AnimatePresence>
           </div>
         </section>
 
-        {/* FILTER BAR */}
-        <nav className="sticky top-[80px] z-40 bg-black/95 backdrop-blur-md py-4 border-y border-white/5">
-          <div className="max-w-7xl mx-auto px-4 flex flex-row items-center gap-4">
-            <div className="flex-shrink-0">
-              <select 
-                value={selectedSession}
-                onChange={(e) => setSelectedSession(e.target.value)}
-                className="bg-zinc-900 border border-zinc-800 text-[#bc9c22] text-[10px] font-black uppercase py-1.5 px-3 rounded outline-none cursor-pointer"
-              >
-                {allSessions.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
-            <div className="w-[1px] h-6 bg-white/10" />
+        {/* FILTER BAR - Session Selector Removed */}
+        <nav className="sticky top-[90px] z-30 bg-black/95 backdrop-blur-md py-4 border-y border-white/5">
+          <div className="max-w-7xl mx-auto px-4 flex justify-center">
             <div className="flex flex-row gap-2 overflow-x-auto custom-mini-scroll py-2">
               {categories.map((cat) => (
                 <button

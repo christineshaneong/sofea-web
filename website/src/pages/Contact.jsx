@@ -22,8 +22,8 @@ const Contact = () => {
     },
     { 
       name: 'Email', 
-      handle: 'sofea.mjiit@utm.my', 
-      link: 'mailto:sofea.mjiit@utm.my', 
+      handle: 'sofea.mjiit@graduate.utm.my', 
+      link: 'mailto:sofea.mjiit@graduate.utm.my', 
       gradient: 'bg-gradient-to-br from-[#bc9c22] to-[#800000]',
       icon: <FaEnvelope size={24} />
     },
