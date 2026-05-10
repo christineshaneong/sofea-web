@@ -30,7 +30,7 @@ export default {
       options: {
         list: [
           { title: 'Club Advisor', value: 'Club Advisor' },
-          { title: 'High Committees', value: 'High Committees' },
+          { title: 'High Council', value: 'High Council' },
           { title: 'Project Committees', value: 'Project Committees' },
           { title: 'Propaganda and Student Enlightment', value: 'Propaganda and Student Enlightment' },
           { title: 'Internal Affairs Division', value: 'Internal Affairs Division' },
